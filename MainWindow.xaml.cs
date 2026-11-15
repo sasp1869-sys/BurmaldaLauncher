@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
+using MessageBox = System.Windows.MessageBox;
 
 namespace BurmaldaLauncher;
 
