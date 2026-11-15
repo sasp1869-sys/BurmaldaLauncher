@@ -1,8 +1,7 @@
+
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
-using System.Windows.Forms;
-using MessageBox = System.Windows.MessageBox;
 
 namespace BurmaldaLauncher;
 
@@ -13,18 +12,28 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
         var candidates = new[]
         {
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ".minecraft"),
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "Roaming", ".minecraft")
+            Path.Combine(
+                Environment.GetFolderPath(
+                    Environment.SpecialFolder.ApplicationData),
+                ".minecraft")
         };
+
         _gameDirectory = candidates.FirstOrDefault(Directory.Exists);
-        if (_gameDirectory is not null) GamePathText.Text = _gameDirectory;
+
+        if (_gameDirectory is not null)
+            GamePathText.Text = _gameDirectory;
     }
 
     private void ChooseFolder_Click(object sender, RoutedEventArgs e)
     {
-        using var dialog = new FolderBrowserDialog { Description = "Выбери папку .minecraft" };
+        using var dialog = new System.Windows.Forms.FolderBrowserDialog
+        {
+            Description = "Выбери папку .minecraft"
+        };
+
         if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
         {
             _gameDirectory = dialog.SelectedPath;
@@ -35,32 +44,46 @@ public partial class MainWindow : Window
 
     private void InstallJar_Click(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(_gameDirectory) || !Directory.Exists(_gameDirectory))
+        if (string.IsNullOrWhiteSpace(_gameDirectory) ||
+            !Directory.Exists(_gameDirectory))
         {
-            MessageBox.Show("Сначала выбери существующую папку Minecraft.", "Burmalda Launcher");
+            MessageBox.Show(
+                "Сначала выбери существующую папку Minecraft.",
+                "Burmalda Launcher");
             return;
         }
 
-        var dialog = new OpenFileDialog
+        var dialog = new Microsoft.Win32.OpenFileDialog
         {
             Title = "Выбери JAR-файл Burmalda Client",
             Filter = "Java mod (*.jar)|*.jar",
             CheckFileExists = true
         };
-        if (dialog.ShowDialog() != true) return;
+
+        if (dialog.ShowDialog() != true)
+            return;
 
         try
         {
             var mods = Path.Combine(_gameDirectory, "mods");
             Directory.CreateDirectory(mods);
-            var destination = Path.Combine(mods, "BurmaldaClient.jar");
+
+            var destination = Path.Combine(
+                mods, "BurmaldaClient.jar");
+
             File.Copy(dialog.FileName, destination, true);
+
             StatusText.Text = "Клиент установлен в mods";
-            MessageBox.Show("Файл клиента скопирован. Убедись, что в этой папке установлены Fabric Loader и Fabric API, если они требуются модом.", "Готово");
+
+            MessageBox.Show(
+                "Файл клиента скопирован!",
+                "Готово");
         }
         catch (Exception ex)
         {
-            MessageBox.Show("Не удалось установить файл: " + ex.Message, "Ошибка");
+            MessageBox.Show(
+                "Ошибка установки: " + ex.Message,
+                "Ошибка");
         }
     }
 }
