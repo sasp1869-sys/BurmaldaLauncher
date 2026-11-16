@@ -62,9 +62,10 @@
      </Border>
      <TextBlock Text="Версия лаунчера" Foreground="#FF9DA3B4"/>
      <TextBlock Text="0.2.0 • Preview" FontSize="16" Margin="0,3,0,15"/>
+     <Button Content="▶  ИГРАТЬ" Click="Play_Click" Background="#FF236B50" FontSize="19" FontWeight="Bold" Padding="20,16" Margin="0,0,0,18"/>
      <TextBlock Text="Что уже умеет лаунчер" FontSize="17" FontWeight="SemiBold"/>
      <TextBlock Text="• Автоматически находит .minecraft&#10;• Устанавливает JAR в папку mods&#10;• Проверяет последний GitHub Release&#10;• Скачивает обновление и сохраняет резервную копию&#10;• Открывает папку модов" Foreground="#FFB9BECC" LineHeight="25" Margin="0,8,0,0"/>
-     <TextBlock Text="Важно: запуск игры пока выполняется через твой Minecraft Launcher. Лаунчер не обходит авторизацию и не хранит пароль." Foreground="#FF9DA3B4" TextWrapping="Wrap" Margin="0,22,0,0"/>
+     <TextBlock Text="Запуск выполняется напрямую из Burmalda Launcher через Microsoft-авторизацию. Нужна заранее установленная версия Fabric 1.21.1." Foreground="#FF9DA3B4" TextWrapping="Wrap" Margin="0,22,0,0"/>
     </StackPanel>
    </Border>
   </Grid>
