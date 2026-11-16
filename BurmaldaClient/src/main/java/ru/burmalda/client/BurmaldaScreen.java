@@ -67,12 +67,12 @@ public final class BurmaldaScreen extends Screen {
         }
 
         addDrawableChild(ButtonWidget.builder(Text.literal("Все"), b -> client.setScreen(new BurmaldaScreen()))
-                .dimensions(startX, 98, buttonWidth, 18).build());
-        searchField = new TextFieldWidget(textRenderer, cx - 154, 98, 226, 20, Text.literal("Search"));
+                .dimensions(startX, 98, 60, 20).build());
+        searchField = new TextFieldWidget(textRenderer, startX + 64, 98, 164, 20, Text.literal("Search"));
         searchField.setMaxLength(40);
         addDrawableChild(searchField);
         addDrawableChild(ButtonWidget.builder(Text.literal("Редактор HUD"), b -> client.setScreen(new BurmaldaScreen(true)))
-                .dimensions(cx + 76, 98, 78, 20).build());
+                .dimensions(startX + 232, 98, 76, 20).build());
     }
 
     private List<BurmaldaModules.Module> visibleModules() {
