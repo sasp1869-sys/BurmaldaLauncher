@@ -88,6 +88,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.betterTooltips, v -> BurmaldaSettings.betterTooltips = v);
         add("Item Highlight", Category.HUD, "Показывает выбранный предмет над панелью быстрого доступа",
                 () -> BurmaldaSettings.itemHighlight, v -> BurmaldaSettings.itemHighlight = v);
+        add("Copy Coordinates", Category.MISC, "Копирует координаты блока по F8",
+                () -> BurmaldaSettings.copyCoordinates, v -> BurmaldaSettings.copyCoordinates = v);
     }
 
     private static void add(String name, Category category, String description,

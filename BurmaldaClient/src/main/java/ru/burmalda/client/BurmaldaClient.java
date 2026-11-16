@@ -19,6 +19,7 @@ public final class BurmaldaClient implements ClientModInitializer {
     private static KeyBinding openMenuKey;
     private static KeyBinding toggleHudKey;
     private static KeyBinding hudEditorKey;
+    private static KeyBinding copyCoordinatesKey;
     private static int hue;
     private static double previousGamma = -1.0;
     private static boolean previousAutoJump;
@@ -38,6 +39,9 @@ public final class BurmaldaClient implements ClientModInitializer {
         hudEditorKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.burmalda.hud_editor", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6, "category.burmalda"));
+        copyCoordinatesKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.burmalda.copy_coordinates", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F8, "category.burmalda"));
 
         ClientSendMessageEvents.ALLOW_CHAT.register(message -> {
             if (!message.equals(".cfg") && !message.startsWith(".cfg ")) return true;
@@ -55,6 +59,14 @@ public final class BurmaldaClient implements ClientModInitializer {
             }
             while (hudEditorKey.wasPressed()) {
                 if (client.currentScreen == null) client.setScreen(new BurmaldaScreen(true));
+            }
+            while (copyCoordinatesKey.wasPressed()) {
+                if (BurmaldaSettings.copyCoordinates && client.player != null && client.world != null) {
+                    var pos = client.player.getBlockPos();
+                    String coordinates = pos.getX() + " " + pos.getY() + " " + pos.getZ();
+                    GLFW.glfwSetClipboardString(client.getWindow().getHandle(), coordinates);
+                    client.player.sendMessage(Text.literal("§b[Burmalda] §fКоординаты скопированы: " + coordinates), false);
+                }
             }
             if (BurmaldaSettings.rgb) hue = (hue + BurmaldaSettings.hueSpeed) % 360;
             updateFullbright(client);
