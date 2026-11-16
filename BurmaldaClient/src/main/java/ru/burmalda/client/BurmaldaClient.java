@@ -15,6 +15,7 @@ public final class BurmaldaClient implements ClientModInitializer {
     private static KeyBinding toggleHudKey;
     private static KeyBinding hudEditorKey;
     private static int hue;
+    private static double previousGamma = -1.0;
 
     @Override
     public void onInitializeClient() {
@@ -42,9 +43,20 @@ public final class BurmaldaClient implements ClientModInitializer {
                 if (client.currentScreen == null) client.setScreen(new BurmaldaScreen(true));
             }
             if (BurmaldaSettings.rgb) hue = (hue + BurmaldaSettings.hueSpeed) % 360;
+            updateFullbright(client);
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> renderHud(drawContext));
+    }
+
+    private static void updateFullbright(MinecraftClient client) {
+        if (BurmaldaSettings.fullbright) {
+            if (previousGamma < 0.0) previousGamma = client.options.getGamma().getValue();
+            if (client.options.getGamma().getValue() < 16.0) client.options.getGamma().setValue(16.0);
+        } else if (previousGamma >= 0.0) {
+            client.options.getGamma().setValue(previousGamma);
+            previousGamma = -1.0;
+        }
     }
 
     private static void renderHud(net.minecraft.client.gui.DrawContext context) {
