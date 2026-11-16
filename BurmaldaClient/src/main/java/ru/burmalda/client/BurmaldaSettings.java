@@ -41,6 +41,8 @@ final class BurmaldaSettings {
     static boolean copyCoordinates = true;
     static boolean autoTool = false;
     static boolean potionHud = false;
+    static boolean foodHud = false;
+    static boolean totemCounter = false;
     static int hudX = 8;
     static int hudY = 8;
     static int hueSpeed = 2;
@@ -140,6 +142,8 @@ final class BurmaldaSettings {
             copyCoordinates = Boolean.parseBoolean(p.getProperty("copyCoordinates", Boolean.toString(copyCoordinates)));
             autoTool = Boolean.parseBoolean(p.getProperty("autoTool", Boolean.toString(autoTool)));
             potionHud = Boolean.parseBoolean(p.getProperty("potionHud", Boolean.toString(potionHud)));
+            foodHud = Boolean.parseBoolean(p.getProperty("foodHud", Boolean.toString(foodHud)));
+            totemCounter = Boolean.parseBoolean(p.getProperty("totemCounter", Boolean.toString(totemCounter)));
             hudX = Integer.parseInt(p.getProperty("hudX", Integer.toString(hudX)));
             hudY = Integer.parseInt(p.getProperty("hudY", Integer.toString(hudY)));
             hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", Integer.toString(hueSpeed)));
@@ -178,6 +182,8 @@ final class BurmaldaSettings {
         p.setProperty("copyCoordinates", Boolean.toString(copyCoordinates));
         p.setProperty("autoTool", Boolean.toString(autoTool));
         p.setProperty("potionHud", Boolean.toString(potionHud));
+        p.setProperty("foodHud", Boolean.toString(foodHud));
+        p.setProperty("totemCounter", Boolean.toString(totemCounter));
         p.setProperty("hudX", Integer.toString(hudX));
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));

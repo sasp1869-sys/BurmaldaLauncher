@@ -96,6 +96,10 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.copyCoordinates, v -> BurmaldaSettings.copyCoordinates = v);
         add("Auto Tool", Category.PLAYER, "Выбирает лучший инструмент из хотбара при начале добычи блока",
                 () -> BurmaldaSettings.autoTool, v -> BurmaldaSettings.autoTool = v);
+        add("Food HUD", Category.HUD, "Показывает уровень голода и насыщения",
+                () -> BurmaldaSettings.foodHud, v -> BurmaldaSettings.foodHud = v);
+        add("Totem Counter", Category.HUD, "Считает тотемы бессмертия в инвентаре и хотбаре",
+                () -> BurmaldaSettings.totemCounter, v -> BurmaldaSettings.totemCounter = v);
     }
 
     private static void add(String name, Category category, String description,

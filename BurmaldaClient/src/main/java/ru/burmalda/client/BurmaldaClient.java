@@ -237,7 +237,9 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.dimensionHud ? 1 : 0)
                 + (BurmaldaSettings.lightHud ? 1 : 0)
                 + (BurmaldaSettings.clockHud ? 1 : 0)
-                + (BurmaldaSettings.potionHud ? Math.max(1, client.player.getStatusEffects().size()) : 0);
+                + (BurmaldaSettings.potionHud ? Math.max(1, client.player.getStatusEffects().size()) : 0)
+                + (BurmaldaSettings.foodHud ? 1 : 0)
+                + (BurmaldaSettings.totemCounter ? 1 : 0);
         if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -363,6 +365,23 @@ public final class BurmaldaClient implements ClientModInitializer {
                     currentY += lineHeight;
                 }
             }
+        }
+        if (BurmaldaSettings.foodHud) {
+            int food = client.player.getHungerManager().getFoodLevel();
+            float saturation = client.player.getHungerManager().getSaturationLevel();
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Food: %d/20  •  Saturation: %.1f", food, saturation)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.totemCounter) {
+            int totems = 0;
+            for (var stack : client.player.getInventory().main) {
+                if (stack.isOf(net.minecraft.item.Items.TOTEM_OF_UNDYING)) totems += stack.getCount();
+            }
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Totems: " + totems), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
         }
         if (BurmaldaSettings.keystrokesHud) {
             String keys = (client.options.forwardKey.isPressed() ? "[W]" : " W ")
