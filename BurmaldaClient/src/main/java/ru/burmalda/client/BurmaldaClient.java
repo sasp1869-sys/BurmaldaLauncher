@@ -19,6 +19,7 @@ public final class BurmaldaClient implements ClientModInitializer {
     private static KeyBinding hudEditorKey;
     private static int hue;
     private static double previousGamma = -1.0;
+    private static boolean previousAutoJump;
 
     @Override
     public void onInitializeClient() {
@@ -54,6 +55,8 @@ public final class BurmaldaClient implements ClientModInitializer {
             if (BurmaldaSettings.rgb) hue = (hue + BurmaldaSettings.hueSpeed) % 360;
             updateFullbright(client);
             updateSprint(client);
+            updateAutoWalk(client);
+            updateAutoJump(client);
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> renderHud(drawContext));
@@ -105,6 +108,21 @@ public final class BurmaldaClient implements ClientModInitializer {
         if (client.player == null || !BurmaldaSettings.sprint) return;
         if (client.player.input.movementForward > 0.0F && client.player.getHungerManager().getFoodLevel() > 6) {
             client.player.setSprinting(true);
+        }
+    }
+
+    private static void updateAutoWalk(MinecraftClient client) {
+        boolean shouldWalk = BurmaldaSettings.autoWalk && client.player != null && client.currentScreen == null;
+        client.options.forwardKey.setPressed(shouldWalk);
+    }
+
+    private static void updateAutoJump(MinecraftClient client) {
+        if (BurmaldaSettings.autoJump) {
+            previousAutoJump = true;
+            if (!client.options.getAutoJump().getValue()) client.options.getAutoJump().setValue(true);
+        } else if (previousAutoJump) {
+            client.options.getAutoJump().setValue(false);
+            previousAutoJump = false;
         }
     }
 

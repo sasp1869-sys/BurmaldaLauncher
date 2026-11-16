@@ -60,6 +60,10 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.fullbright, v -> BurmaldaSettings.fullbright = v);
         add("Sprint", Category.MOVEMENT, "Автоматически включает обычный спринт при движении вперёд",
                 () -> BurmaldaSettings.sprint, v -> BurmaldaSettings.sprint = v);
+        add("Auto Walk", Category.MOVEMENT, "Удерживает движение вперёд, пока модуль включён",
+                () -> BurmaldaSettings.autoWalk, v -> BurmaldaSettings.autoWalk = v);
+        add("Auto Jump", Category.MOVEMENT, "Включает стандартную настройку автоматического прыжка Minecraft",
+                () -> BurmaldaSettings.autoJump, v -> BurmaldaSettings.autoJump = v);
     }
 
     private static void add(String name, Category category, String description,

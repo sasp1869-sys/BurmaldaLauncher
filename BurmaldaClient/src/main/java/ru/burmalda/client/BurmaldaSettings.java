@@ -23,6 +23,8 @@ final class BurmaldaSettings {
     static boolean performance = false;
     static boolean fullbright = false;
     static boolean sprint = false;
+    static boolean autoWalk = false;
+    static boolean autoJump = false;
     static int hudX = 8;
     static int hudY = 8;
     static int hueSpeed = 2;
@@ -104,6 +106,8 @@ final class BurmaldaSettings {
             performance = Boolean.parseBoolean(p.getProperty("performance", Boolean.toString(performance)));
             fullbright = Boolean.parseBoolean(p.getProperty("fullbright", Boolean.toString(fullbright)));
             sprint = Boolean.parseBoolean(p.getProperty("sprint", Boolean.toString(sprint)));
+            autoWalk = Boolean.parseBoolean(p.getProperty("autoWalk", Boolean.toString(autoWalk)));
+            autoJump = Boolean.parseBoolean(p.getProperty("autoJump", Boolean.toString(autoJump)));
             hudX = Integer.parseInt(p.getProperty("hudX", Integer.toString(hudX)));
             hudY = Integer.parseInt(p.getProperty("hudY", Integer.toString(hudY)));
             hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", Integer.toString(hueSpeed)));
@@ -124,6 +128,8 @@ final class BurmaldaSettings {
         p.setProperty("performance", Boolean.toString(performance));
         p.setProperty("fullbright", Boolean.toString(fullbright));
         p.setProperty("sprint", Boolean.toString(sprint));
+        p.setProperty("autoWalk", Boolean.toString(autoWalk));
+        p.setProperty("autoJump", Boolean.toString(autoJump));
         p.setProperty("hudX", Integer.toString(hudX));
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));
