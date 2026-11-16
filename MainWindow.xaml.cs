@@ -6,6 +6,10 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows;
 using MessageBox = System.Windows.MessageBox;
+using CmlLib.Core;
+using CmlLib.Core.Auth;
+using CmlLib.Core.Auth.Microsoft;
+using CmlLib.Core.ProcessBuilder;
 
 namespace BurmaldaLauncher;
 
@@ -221,6 +225,84 @@ public partial class MainWindow : Window
         var mods = Path.Combine(_gameDirectory!, "mods");
         Directory.CreateDirectory(mods);
         Process.Start(new ProcessStartInfo("explorer.exe", mods) { UseShellExecute = true });
+    }
+
+
+    private async void Play_Click(object sender, RoutedEventArgs e)
+    {
+        if (!EnsureGameDirectory()) return;
+
+        var versionId = FindFabric1211Version();
+        if (versionId is null)
+        {
+            MessageBox.Show(
+                "Не найдена установленная версия Fabric для Minecraft 1.21.1. Сначала установи Fabric 1.21.1 в обычном Minecraft Launcher и один раз запусти её.",
+                "Fabric не найден");
+            return;
+        }
+
+        SetBusy(true, "Подключаю Microsoft-аккаунт...");
+        try
+        {
+            // Microsoft OAuth is handled by the authentication library; the launcher never asks for or stores the password.
+            var loginHandler = JELoginHandlerBuilder.BuildDefault();
+            var session = await loginHandler.Authenticate();
+
+            SetBusy(true, "Проверяю файлы Minecraft и Fabric...");
+            var minecraftPath = new MinecraftPath(_gameDirectory!);
+            var launcher = new MinecraftLauncher(minecraftPath);
+            launcher.FileProgressChanged += (_, args) =>
+                Dispatcher.Invoke(() => StatusText.Text = $"Подготовка: {args.Name} ({args.ProgressedTasks}/{args.TotalTasks})");
+
+            await launcher.InstallAsync(versionId);
+
+            SetBusy(true, "Запускаю Burmalda Client...");
+            var options = new MLaunchOption
+            {
+                Session = session,
+                MaximumRamMb = 4096,
+                GameLauncherName = "BurmaldaLauncher",
+                GameLauncherVersion = "0.3.0"
+            };
+            var process = await launcher.BuildProcessAsync(versionId, options);
+            process.Start();
+            StatusText.Text = "Minecraft запущен";
+        }
+        catch (Exception ex)
+        {
+            StatusText.Text = "Не удалось запустить Minecraft";
+            MessageBox.Show("Ошибка запуска: " + ex.Message, "Burmalda Launcher");
+        }
+        finally
+        {
+            Cursor = System.Windows.Input.Cursors.Arrow;
+            SaveSettings();
+        }
+    }
+
+    private string? FindFabric1211Version()
+    {
+        var versionsDirectory = Path.Combine(_gameDirectory!, "versions");
+        if (!Directory.Exists(versionsDirectory)) return null;
+
+        foreach (var jsonFile in Directory.EnumerateFiles(versionsDirectory, "*.json", SearchOption.AllDirectories))
+        {
+            try
+            {
+                using var document = JsonDocument.Parse(File.ReadAllText(jsonFile));
+                var root = document.RootElement;
+                if (!root.TryGetProperty("id", out var idElement)) continue;
+                var id = idElement.GetString();
+                if (string.IsNullOrWhiteSpace(id) ||
+                    !id.Contains("fabric", StringComparison.OrdinalIgnoreCase)) continue;
+
+                if (root.TryGetProperty("inheritsFrom", out var parentElement) &&
+                    parentElement.GetString() == "1.21.1")
+                    return id;
+            }
+            catch { /* Ignore unrelated or damaged version metadata. */ }
+        }
+        return null;
     }
 
     private void SetBusy(bool busy, string status)
