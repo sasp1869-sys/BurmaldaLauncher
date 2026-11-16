@@ -3,12 +3,15 @@ package ru.burmalda.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.List;
 
 public final class BurmaldaClient implements ClientModInitializer {
     private static KeyBinding openMenuKey;
@@ -31,6 +34,12 @@ public final class BurmaldaClient implements ClientModInitializer {
                 "key.burmalda.hud_editor", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_F6, "category.burmalda"));
 
+        ClientSendMessageEvents.ALLOW_CHAT.register(message -> {
+            if (!message.startsWith(".cfg")) return true;
+            handleConfigCommand(message);
+            return false;
+        });
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenuKey.wasPressed()) {
                 if (client.currentScreen == null) client.setScreen(new BurmaldaScreen());
@@ -48,6 +57,48 @@ public final class BurmaldaClient implements ClientModInitializer {
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> renderHud(drawContext));
+    }
+
+    private static void handleConfigCommand(String raw) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        String[] parts = raw.trim().split("\\s+");
+        if (client.player == null) return;
+
+        if (parts.length == 1 || parts[1].equalsIgnoreCase("help")) {
+            configMessage(".cfg save <name> | .cfg load <name> | .cfg list | .cfg delete <name>");
+            return;
+        }
+
+        String action = parts[1].toLowerCase(java.util.Locale.ROOT);
+        if (action.equals("list")) {
+            List<String> configs = BurmaldaSettings.listNamed();
+            configMessage(configs.isEmpty() ? "Сохранённых конфигов пока нет." : "Конфиги: " + String.join(", ", configs));
+            return;
+        }
+
+        if (parts.length < 3) {
+            configMessage("Укажи имя: .cfg " + action + " <name>");
+            return;
+        }
+
+        String name = parts[2];
+        switch (action) {
+            case "save" -> configMessage(BurmaldaSettings.saveNamed(name)
+                    ? "Конфиг '" + name + "' сохранён."
+                    : "Не удалось сохранить. Имя: латиница, цифры, _ или -, до 32 символов.");
+            case "load" -> configMessage(BurmaldaSettings.loadNamed(name)
+                    ? "Конфиг '" + name + "' загружен."
+                    : "Конфиг не найден или имя некорректно.");
+            case "delete" -> configMessage(BurmaldaSettings.deleteNamed(name)
+                    ? "Конфиг '" + name + "' удалён."
+                    : "Не удалось удалить конфиг.");
+            default -> configMessage("Команда не найдена. Напиши .cfg help");
+        }
+    }
+
+    private static void configMessage(String message) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.player != null) client.player.sendMessage(Text.literal("§b[Burmalda] §f" + message), false);
     }
 
     private static void updateSprint(MinecraftClient client) {

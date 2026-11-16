@@ -7,7 +7,10 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 final class BurmaldaSettings {
     static boolean hud = true;
@@ -28,31 +31,88 @@ final class BurmaldaSettings {
         return FabricLoader.getInstance().getConfigDir().resolve("burmalda.properties");
     }
 
+    private static Path profilesDir() {
+        return FabricLoader.getInstance().getConfigDir().resolve("burmalda").resolve("configs");
+    }
+
     static void load() {
-        Properties p = new Properties();
-        Path path = file();
-        if (!Files.exists(path)) return;
-        try (Reader reader = Files.newBufferedReader(path)) {
-            p.load(reader);
-            hud = Boolean.parseBoolean(p.getProperty("hud", "true"));
-            fps = Boolean.parseBoolean(p.getProperty("fps", "true"));
-            coordinates = Boolean.parseBoolean(p.getProperty("coordinates", "true"));
-            watermark = Boolean.parseBoolean(p.getProperty("watermark", "true"));
-            panel = Boolean.parseBoolean(p.getProperty("panel", "true"));
-            rgb = Boolean.parseBoolean(p.getProperty("rgb", "true"));
-            compact = Boolean.parseBoolean(p.getProperty("compact", "false"));
-            performance = Boolean.parseBoolean(p.getProperty("performance", "false"));
-            fullbright = Boolean.parseBoolean(p.getProperty("fullbright", "false"));
-            sprint = Boolean.parseBoolean(p.getProperty("sprint", "false"));
-            hudX = Integer.parseInt(p.getProperty("hudX", "8"));
-            hudY = Integer.parseInt(p.getProperty("hudY", "8"));
-            hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", "2"));
-        } catch (IOException | NumberFormatException ignored) {
-            // Defaults are kept if the settings file is damaged.
-        }
+        readFrom(file());
     }
 
     static void save() {
+        writeTo(file());
+    }
+
+    static boolean saveNamed(String name) {
+        Path target = namedFile(name);
+        if (target == null) return false;
+        writeTo(target);
+        return Files.exists(target);
+    }
+
+    static boolean loadNamed(String name) {
+        Path target = namedFile(name);
+        if (target == null || !Files.isRegularFile(target)) return false;
+        readFrom(target);
+        save();
+        return true;
+    }
+
+    static boolean deleteNamed(String name) {
+        Path target = namedFile(name);
+        if (target == null) return false;
+        try {
+            return Files.deleteIfExists(target);
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
+
+    static List<String> listNamed() {
+        try {
+            Files.createDirectories(profilesDir());
+            try (Stream<Path> files = Files.list(profilesDir())) {
+                return files.filter(Files::isRegularFile)
+                        .map(p -> p.getFileName().toString())
+                        .filter(n -> n.endsWith(".properties"))
+                        .map(n -> n.substring(0, n.length() - ".properties".length()))
+                        .sorted(String.CASE_INSENSITIVE_ORDER)
+                        .toList();
+            }
+        } catch (IOException ignored) {
+            return List.of();
+        }
+    }
+
+    private static Path namedFile(String name) {
+        if (name == null || !name.matches("[A-Za-z0-9_-]{1,32}")) return null;
+        return profilesDir().resolve(name + ".properties");
+    }
+
+    private static void readFrom(Path path) {
+        if (!Files.isRegularFile(path)) return;
+        Properties p = new Properties();
+        try (Reader reader = Files.newBufferedReader(path)) {
+            p.load(reader);
+            hud = Boolean.parseBoolean(p.getProperty("hud", Boolean.toString(hud)));
+            fps = Boolean.parseBoolean(p.getProperty("fps", Boolean.toString(fps)));
+            coordinates = Boolean.parseBoolean(p.getProperty("coordinates", Boolean.toString(coordinates)));
+            watermark = Boolean.parseBoolean(p.getProperty("watermark", Boolean.toString(watermark)));
+            panel = Boolean.parseBoolean(p.getProperty("panel", Boolean.toString(panel)));
+            rgb = Boolean.parseBoolean(p.getProperty("rgb", Boolean.toString(rgb)));
+            compact = Boolean.parseBoolean(p.getProperty("compact", Boolean.toString(compact)));
+            performance = Boolean.parseBoolean(p.getProperty("performance", Boolean.toString(performance)));
+            fullbright = Boolean.parseBoolean(p.getProperty("fullbright", Boolean.toString(fullbright)));
+            sprint = Boolean.parseBoolean(p.getProperty("sprint", Boolean.toString(sprint)));
+            hudX = Integer.parseInt(p.getProperty("hudX", Integer.toString(hudX)));
+            hudY = Integer.parseInt(p.getProperty("hudY", Integer.toString(hudY)));
+            hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", Integer.toString(hueSpeed)));
+        } catch (IOException | NumberFormatException ignored) {
+            // Keep current values if a settings file is damaged.
+        }
+    }
+
+    private static void writeTo(Path path) {
         Properties p = new Properties();
         p.setProperty("hud", Boolean.toString(hud));
         p.setProperty("fps", Boolean.toString(fps));
@@ -68,8 +128,8 @@ final class BurmaldaSettings {
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));
         try {
-            Files.createDirectories(file().getParent());
-            try (Writer writer = Files.newBufferedWriter(file())) {
+            Files.createDirectories(path.getParent());
+            try (Writer writer = Files.newBufferedWriter(path)) {
                 p.store(writer, "Burmalda Client settings");
             }
         } catch (IOException ignored) {
