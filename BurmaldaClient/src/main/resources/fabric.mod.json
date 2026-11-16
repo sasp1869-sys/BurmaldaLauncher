@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "burmalda",
+  "version": "${version}",
+  "name": "Burmalda Client",
+  "description": "A client-side HUD and customizable Burmalda interface.",
+  "environment": "client",
+  "entrypoints": { "client": ["ru.burmalda.client.BurmaldaClient"] },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
