@@ -208,5 +208,5 @@ public final class BurmaldaClient implements ClientModInitializer {
         BurmaldaSettings.save();
     }
 
-    private BurmaldaClient() {}
+    public BurmaldaClient() {}
 }
