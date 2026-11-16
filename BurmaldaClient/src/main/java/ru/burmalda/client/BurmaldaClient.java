@@ -12,38 +12,86 @@ import org.lwjgl.glfw.GLFW;
 
 public final class BurmaldaClient implements ClientModInitializer {
     private static KeyBinding openMenuKey;
-    private static boolean hudVisible = true;
-    private static int hue = 0;
+    private static KeyBinding toggleHudKey;
+    private static KeyBinding hudEditorKey;
+    private static int hue;
 
     @Override
     public void onInitializeClient() {
+        BurmaldaSettings.load();
+
         openMenuKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.burmalda.open_menu", InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_RIGHT_SHIFT, "category.burmalda"));
+        toggleHudKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.burmalda.toggle_hud", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F7, "category.burmalda"));
+        hudEditorKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.burmalda.hud_editor", InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_F6, "category.burmalda"));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openMenuKey.wasPressed()) {
                 if (client.currentScreen == null) client.setScreen(new BurmaldaScreen());
             }
-            hue = (hue + 2) % 360;
+            while (toggleHudKey.wasPressed()) {
+                BurmaldaSettings.hud = !BurmaldaSettings.hud;
+                BurmaldaSettings.save();
+            }
+            while (hudEditorKey.wasPressed()) {
+                if (client.currentScreen == null) client.setScreen(new BurmaldaScreen(true));
+            }
+            if (BurmaldaSettings.rgb) hue = (hue + BurmaldaSettings.hueSpeed) % 360;
         });
 
-        HudRenderCallback.EVENT.register((drawContext, tickCounter) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            if (!hudVisible || client.player == null) return;
-            int color = java.awt.Color.HSBtoRGB(hue / 360.0f, 0.85f, 1.0f) | 0xFF000000;
-            int x = 8, y = 8;
-            drawContext.drawTextWithShadow(client.textRenderer, Text.literal("BURMALDA CLIENT"), x, y, color);
-            y += 12;
-            drawContext.drawTextWithShadow(client.textRenderer, Text.literal("FPS: " + client.getCurrentFps()), x, y, 0xFFFFFFFF);
-            y += 12;
-            drawContext.drawTextWithShadow(client.textRenderer,
-                    Text.literal(String.format("XYZ: %.1f / %.1f / %.1f",
-                            client.player.getX(), client.player.getY(), client.player.getZ())),
-                    x, y, 0xFFFFFFFF);
-        });
+        HudRenderCallback.EVENT.register((drawContext, tickCounter) -> renderHud(drawContext));
     }
 
-    static void setHudVisible(boolean visible) { hudVisible = visible; }
-    static boolean isHudVisible() { return hudVisible; }
+    private static void renderHud(net.minecraft.client.gui.DrawContext context) {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (!BurmaldaSettings.hud || client.player == null) return;
+
+        int x = Math.max(0, BurmaldaSettings.hudX);
+        int y = Math.max(0, BurmaldaSettings.hudY);
+        int titleColor = BurmaldaSettings.rgb
+                ? java.awt.Color.HSBtoRGB(hue / 360.0f, 0.85f, 1.0f) | 0xFF000000
+                : 0xFF66CCFF;
+
+        int lines = (BurmaldaSettings.watermark ? 1 : 0)
+                + (BurmaldaSettings.fps ? 1 : 0)
+                + (BurmaldaSettings.coordinates ? 1 : 0);
+        if (lines == 0) return;
+
+        int lineHeight = BurmaldaSettings.compact ? 10 : 12;
+        int width = BurmaldaSettings.compact ? 126 : 164;
+        if (BurmaldaSettings.panel) {
+            context.fill(x - 4, y - 4, x + width, y + lines * lineHeight + 3, 0x990B1020);
+            context.fill(x - 4, y - 4, x + width, y - 2, titleColor);
+        }
+
+        int currentY = y;
+        if (BurmaldaSettings.watermark) {
+            context.drawTextWithShadow(client.textRenderer, Text.literal("BURMALDA CLIENT"),
+                    x, currentY, titleColor);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.fps) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("FPS: " + client.getCurrentFps()), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.coordinates) {
+            String coords = String.format(java.util.Locale.ROOT, "XYZ: %.1f / %.1f / %.1f",
+                    client.player.getX(), client.player.getY(), client.player.getZ());
+            context.drawTextWithShadow(client.textRenderer, Text.literal(coords), x, currentY, 0xFFFFFFFF);
+        }
+    }
+
+    static void moveHud(int dx, int dy) {
+        BurmaldaSettings.hudX = Math.max(0, Math.min(1000, BurmaldaSettings.hudX + dx));
+        BurmaldaSettings.hudY = Math.max(0, Math.min(700, BurmaldaSettings.hudY + dy));
+        BurmaldaSettings.save();
+    }
+
+    private BurmaldaClient() {}
 }
