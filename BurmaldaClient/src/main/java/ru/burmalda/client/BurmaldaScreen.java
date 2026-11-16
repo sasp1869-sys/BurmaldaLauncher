@@ -156,7 +156,7 @@ public final class BurmaldaScreen extends Screen {
             context.fill(x, y, right, y + 18, 0xFF202A3A);
         }
         String label = index == 0 ? "All modules" : category.title;
-        context.drawTextWithShadow(textRenderer, Text.literal(label), x + 9, y + 5,
+        drawCrispText(context, Text.literal(label), x + 9, y + 5,
                 active ? 0xFFFFFFFF : 0xFFADB8C8);
     }
 
@@ -178,7 +178,7 @@ public final class BurmaldaScreen extends Screen {
         context.fill(knobX, switchY + 2, knobX + 11, switchY + 13, 0xFFF1F5FA);
 
         int textMax = Math.max(60, switchX - x - 18);
-        context.drawTextWithShadow(textRenderer,
+        drawCrispText(context,
                 Text.literal(textRenderer.trimToWidth(module.name, textMax)),
                 x + 11, y + 9, enabled ? 0xFFFFFFFF : 0xFFE0E6EF);
         String description = textRenderer.trimToWidth(module.description, cardWidth - 22);
@@ -205,11 +205,11 @@ public final class BurmaldaScreen extends Screen {
         context.fill(panelX, panelY, panelX + panelWidth, panelY + 2, 0xFF64B8FF);
         context.fill(panelX + SIDEBAR_WIDTH, panelY + 43, panelX + panelWidth, panelY + 44, 0xFF263246);
 
-        context.drawTextWithShadow(textRenderer, Text.literal("BURMALDA"),
+        drawCrispText(context, Text.literal("BURMALDA"),
                 panelX + 14, panelY + 15, 0xFF76C7FF);
         context.drawText(textRenderer, Text.literal("CLIENT  /  1.21.1"),
                 panelX + 14, panelY + 29, 0xFF73849A, false);
-        context.drawTextWithShadow(textRenderer, Text.literal("CATEGORIES"),
+        drawCrispText(context, Text.literal("CATEGORIES"),
                 panelX + 12, panelY + 38, 0xFF667A94);
 
         BurmaldaModules.Category[] categories = BurmaldaModules.Category.values();
@@ -219,7 +219,7 @@ public final class BurmaldaScreen extends Screen {
         }
 
         String heading = selectedCategory == null ? "All modules" : selectedCategory.title;
-        context.drawTextWithShadow(textRenderer, Text.literal(heading),
+        drawCrispText(context, Text.literal(heading),
                 contentX, panelY + 16, 0xFFF0F5FC);
         context.drawText(textRenderer, Text.literal("Manage your client features"),
                 contentX, panelY + 31, 0xFF8291A5, false);
