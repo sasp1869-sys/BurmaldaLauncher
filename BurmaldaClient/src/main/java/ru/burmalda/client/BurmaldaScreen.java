@@ -103,8 +103,8 @@ public final class BurmaldaScreen extends Screen {
                 && mouseY >= panelY + 48 && mouseY < panelY + panelHeight - 40) {
             BurmaldaModules.Category[] categories = BurmaldaModules.Category.values();
             int index = (int) ((mouseY - (panelY + 48)) / 21);
-            if (index >= 0 && index < categories.length) {
-                selectedCategory = index == 0 ? null : categories[index];
+            if (index >= 0 && index <= categories.length) {
+                selectedCategory = index == 0 ? null : categories[index - 1];
                 moduleScroll = 0;
                 return true;
             }
