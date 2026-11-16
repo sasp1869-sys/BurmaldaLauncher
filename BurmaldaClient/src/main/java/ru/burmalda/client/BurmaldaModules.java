@@ -7,10 +7,11 @@ import java.util.function.Consumer;
 
 final class BurmaldaModules {
     enum Category {
-        COMBAT("Combat"), PLAYER("Player"), MOVEMENT("Movement"),
-        RENDER("Render"), WORLD("World"), MISC("Misc"),
-        HUD("HUD"), GUI("GUI"), FRIENDS("Friends"), MACROS("Macros"),
-        CONFIG("Config"), PROFILES("Profiles");
+        MODULES("Modules"), CONFIG("Config"), GUI("GUI"), HUD("HUD"),
+        FRIENDS("Friends"), MACROS("Macros"), PROFILES("Profiles"),
+        BARITONE("Baritone"), COMBAT("Combat"), PLAYER("Player"),
+        MOVEMENT("Movement"), RENDER("Render"), WORLD("World"),
+        MISC("Misc"), SEARCH("Search");
 
         final String title;
         Category(String title) { this.title = title; }
@@ -39,15 +40,24 @@ final class BurmaldaModules {
     private static final List<Module> MODULES = new ArrayList<>();
 
     static {
-        add("HUD", Category.HUD, "Показывать или скрывать интерфейс", () -> BurmaldaSettings.hud, v -> BurmaldaSettings.hud = v);
-        add("FPS", Category.HUD, "Счётчик кадров в секунду", () -> BurmaldaSettings.fps, v -> BurmaldaSettings.fps = v);
-        add("Coordinates", Category.HUD, "Координаты игрока XYZ", () -> BurmaldaSettings.coordinates, v -> BurmaldaSettings.coordinates = v);
-        add("Watermark", Category.HUD, "Название Burmalda Client", () -> BurmaldaSettings.watermark, v -> BurmaldaSettings.watermark = v);
-        add("HUD Panel", Category.HUD, "Полупрозрачная подложка HUD", () -> BurmaldaSettings.panel, v -> BurmaldaSettings.panel = v);
-        add("RGB", Category.GUI, "Цветовая анимация интерфейса", () -> BurmaldaSettings.rgb, v -> BurmaldaSettings.rgb = v);
-        add("Compact HUD", Category.HUD, "Уменьшенный размер HUD", () -> BurmaldaSettings.compact, v -> BurmaldaSettings.compact = v);
-        add("Performance Display", Category.HUD, "Компактное отображение элементов", () -> BurmaldaSettings.performance, v -> BurmaldaSettings.performance = v);
-        add("Fullbright", Category.RENDER, "Повышенная яркость только на клиенте", () -> BurmaldaSettings.fullbright, v -> BurmaldaSettings.fullbright = v);
+        add("HUD", Category.HUD, "Показывать или скрывать интерфейс",
+                () -> BurmaldaSettings.hud, v -> BurmaldaSettings.hud = v);
+        add("FPS", Category.HUD, "Счётчик кадров в секунду",
+                () -> BurmaldaSettings.fps, v -> BurmaldaSettings.fps = v);
+        add("Coordinates", Category.HUD, "Координаты игрока XYZ",
+                () -> BurmaldaSettings.coordinates, v -> BurmaldaSettings.coordinates = v);
+        add("Watermark", Category.HUD, "Название Burmalda Client",
+                () -> BurmaldaSettings.watermark, v -> BurmaldaSettings.watermark = v);
+        add("HUD Panel", Category.HUD, "Полупрозрачная подложка HUD",
+                () -> BurmaldaSettings.panel, v -> BurmaldaSettings.panel = v);
+        add("RGB", Category.GUI, "Цветовая анимация интерфейса",
+                () -> BurmaldaSettings.rgb, v -> BurmaldaSettings.rgb = v);
+        add("Compact HUD", Category.HUD, "Уменьшенный размер HUD",
+                () -> BurmaldaSettings.compact, v -> BurmaldaSettings.compact = v);
+        add("Performance Display", Category.HUD, "Компактное отображение элементов",
+                () -> BurmaldaSettings.performance, v -> BurmaldaSettings.performance = v);
+        add("Fullbright", Category.RENDER, "Повышенная яркость только на клиенте",
+                () -> BurmaldaSettings.fullbright, v -> BurmaldaSettings.fullbright = v);
     }
 
     private static void add(String name, Category category, String description,
