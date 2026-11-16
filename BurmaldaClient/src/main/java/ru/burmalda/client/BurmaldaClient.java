@@ -62,8 +62,8 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.coordinates ? 1 : 0);
         if (lines == 0) return;
 
-        int lineHeight = BurmaldaSettings.compact ? 10 : 12;
-        int width = BurmaldaSettings.compact ? 126 : 164;
+        int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
+        int width = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 126 : 164;
         if (BurmaldaSettings.panel) {
             context.fill(x - 4, y - 4, x + width, y + lines * lineHeight + 3, 0x990B1020);
             context.fill(x - 4, y - 4, x + width, y - 2, titleColor);
