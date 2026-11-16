@@ -93,7 +93,7 @@ public partial class MainWindow : Window
     private void InstallJar_Click(object sender, RoutedEventArgs e)
     {
         if (!EnsureGameDirectory()) return;
-        var dialog = new OpenFileDialog
+        var dialog = new Microsoft.Win32.OpenFileDialog
         {
             Title = "Выбери JAR-файл Burmalda Client",
             Filter = "Java mod (*.jar)|*.jar",
