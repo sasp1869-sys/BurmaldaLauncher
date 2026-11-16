@@ -21,6 +21,7 @@ public final class BurmaldaClient implements ClientModInitializer {
     private static double previousGamma = -1.0;
     private static boolean previousAutoJump;
     private static boolean autoJumpWasEnabled;
+    private static boolean autoWalkWasActive;
 
     @Override
     public void onInitializeClient() {
@@ -114,7 +115,12 @@ public final class BurmaldaClient implements ClientModInitializer {
 
     private static void updateAutoWalk(MinecraftClient client) {
         boolean shouldWalk = BurmaldaSettings.autoWalk && client.player != null && client.currentScreen == null;
-        client.options.forwardKey.setPressed(shouldWalk);
+        if (shouldWalk) {
+            client.options.forwardKey.setPressed(true);
+        } else if (autoWalkWasActive) {
+            client.options.forwardKey.setPressed(false);
+        }
+        autoWalkWasActive = shouldWalk;
     }
 
     private static void updateAutoJump(MinecraftClient client) {
@@ -155,11 +161,14 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.coordinates ? 1 : 0)
                 + (BurmaldaSettings.pingHud ? 1 : 0)
                 + (BurmaldaSettings.directionHud ? 1 : 0)
-                + (BurmaldaSettings.speedHud ? 1 : 0);
+                + (BurmaldaSettings.speedHud ? 1 : 0)
+                + (BurmaldaSettings.biomeHud ? 1 : 0)
+                + (BurmaldaSettings.armorHud ? 1 : 0)
+                + (BurmaldaSettings.keystrokesHud ? 2 : 0);
         if (lines == 0) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
-        int width = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 126 : 164;
+        int width = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 150 : 196;
         if (BurmaldaSettings.panel) {
             context.fill(x - 4, y - 4, x + width, y + lines * lineHeight + 3, 0x990B1020);
             context.fill(x - 4, y - 4, x + width, y - 2, titleColor);
@@ -199,6 +208,39 @@ public final class BurmaldaClient implements ClientModInitializer {
             double vz = client.player.getVelocity().z;
             double speed = Math.sqrt(vx * vx + vz * vz) * 20.0;
             context.drawTextWithShadow(client.textRenderer, Text.literal(String.format(java.util.Locale.ROOT, "Speed: %.2f b/s", speed)), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.biomeHud && client.world != null) {
+            String biome = client.world.getBiome(client.player.getBlockPos()).getKey()
+                    .map(key -> key.getValue().getPath()).orElse("unknown");
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Biome: " + biome), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.armorHud) {
+            StringBuilder armor = new StringBuilder("Armor: ");
+            boolean first = true;
+            for (var stack : client.player.getArmorItems()) {
+                if (stack.isEmpty()) continue;
+                if (!first) armor.append(" | ");
+                first = false;
+                int remaining = stack.isDamageable()
+                        ? Math.max(0, 100 - stack.getDamage() * 100 / stack.getMaxDamage()) : 100;
+                armor.append(stack.getName().getString()).append(" ").append(remaining).append("%");
+            }
+            if (first) armor.append("empty");
+            context.drawTextWithShadow(client.textRenderer, Text.literal(armor.toString()), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.keystrokesHud) {
+            String keys = (client.options.forwardKey.isPressed() ? "[W]" : " W ")
+                    + (client.options.leftKey.isPressed() ? "[A]" : " A ")
+                    + (client.options.backKey.isPressed() ? "[S]" : " S ")
+                    + (client.options.rightKey.isPressed() ? "[D]" : " D ");
+            context.drawTextWithShadow(client.textRenderer, Text.literal(keys), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+            String actions = (client.options.jumpKey.isPressed() ? "[SPACE]" : " SPACE ")
+                    + (client.options.sprintKey.isPressed() ? "[SPRINT]" : " SPRINT ");
+            context.drawTextWithShadow(client.textRenderer, Text.literal(actions), x, currentY, 0xFFFFFFFF);
         }
     }
 

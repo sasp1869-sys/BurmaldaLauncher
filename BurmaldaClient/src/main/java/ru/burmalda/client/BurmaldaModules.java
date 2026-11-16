@@ -70,6 +70,12 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.directionHud, v -> BurmaldaSettings.directionHud = v);
         add("Speed", Category.HUD, "Показывает горизонтальную скорость",
                 () -> BurmaldaSettings.speedHud, v -> BurmaldaSettings.speedHud = v);
+        add("Biome", Category.HUD, "Показывает текущий биом",
+                () -> BurmaldaSettings.biomeHud, v -> BurmaldaSettings.biomeHud = v);
+        add("Armor HUD", Category.HUD, "Показывает прочность надетой брони",
+                () -> BurmaldaSettings.armorHud, v -> BurmaldaSettings.armorHud = v);
+        add("Keystrokes", Category.HUD, "Показывает нажатые WASD, прыжок и спринт",
+                () -> BurmaldaSettings.keystrokesHud, v -> BurmaldaSettings.keystrokesHud = v);
     }
 
     private static void add(String name, Category category, String description,
