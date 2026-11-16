@@ -5,6 +5,8 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.minecraft.registry.Registries;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -59,6 +61,18 @@ public final class BurmaldaClient implements ClientModInitializer {
             updateSprint(client);
             updateAutoWalk(client);
             updateAutoJump(client);
+        });
+
+        ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
+            if (!BurmaldaSettings.betterTooltips || stack.isEmpty()) return;
+            lines.add(Text.literal("§8ID: " + Registries.ITEM.getId(stack.getItem())));
+            if (stack.isDamageable()) {
+                int remaining = Math.max(0, 100 - stack.getDamage() * 100 / stack.getMaxDamage());
+                lines.add(Text.literal("§7Durability: §f" + remaining + "%"));
+            }
+            if (stack.getCount() > 1) {
+                lines.add(Text.literal("§7Stack: §f" + stack.getCount()));
+            }
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> renderHud(drawContext));

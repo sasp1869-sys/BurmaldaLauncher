@@ -82,6 +82,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.lightHud, v -> BurmaldaSettings.lightHud = v);
         add("World Clock", Category.HUD, "Показывает игровое время мира",
                 () -> BurmaldaSettings.clockHud, v -> BurmaldaSettings.clockHud = v);
+        add("Better Tooltips", Category.RENDER, "Добавляет ID предмета и прочность в подсказку",
+                () -> BurmaldaSettings.betterTooltips, v -> BurmaldaSettings.betterTooltips = v);
     }
 
     private static void add(String name, Category category, String description,
