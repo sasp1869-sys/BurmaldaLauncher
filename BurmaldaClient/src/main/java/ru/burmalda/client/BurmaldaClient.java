@@ -182,13 +182,30 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.dimensionHud ? 1 : 0)
                 + (BurmaldaSettings.lightHud ? 1 : 0)
                 + (BurmaldaSettings.clockHud ? 1 : 0);
-        if (lines == 0) return;
+        if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
         int width = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 150 : 196;
         if (BurmaldaSettings.panel) {
             context.fill(x - 4, y - 4, x + width, y + lines * lineHeight + 3, 0x990B1020);
             context.fill(x - 4, y - 4, x + width, y - 2, titleColor);
+        }
+
+        if (BurmaldaSettings.itemHighlight) {
+            var heldStack = client.player.getMainHandStack();
+            if (!heldStack.isEmpty()) {
+                int itemX = client.getWindow().getScaledWidth() / 2 - 90;
+                int itemY = client.getWindow().getScaledHeight() - 54;
+                context.fill(itemX - 5, itemY - 4, itemX + 150, itemY + 22, 0x990B1020);
+                context.drawItem(heldStack, itemX, itemY);
+                String heldName = heldStack.getName().getString();
+                String details = heldName + (heldStack.getCount() > 1 ? " x" + heldStack.getCount() : "");
+                if (heldStack.isDamageable()) {
+                    int remaining = Math.max(0, 100 - heldStack.getDamage() * 100 / heldStack.getMaxDamage());
+                    details += "  " + remaining + "%";
+                }
+                context.drawTextWithShadow(client.textRenderer, Text.literal(details), itemX + 22, itemY + 6, 0xFFFFFFFF);
+            }
         }
 
         int currentY = y;

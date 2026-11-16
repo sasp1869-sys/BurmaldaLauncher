@@ -35,6 +35,7 @@ final class BurmaldaSettings {
     static boolean lightHud = false;
     static boolean clockHud = false;
     static boolean betterTooltips = false;
+    static boolean itemHighlight = false;
     static int hudX = 8;
     static int hudY = 8;
     static int hueSpeed = 2;
@@ -128,6 +129,7 @@ final class BurmaldaSettings {
             lightHud = Boolean.parseBoolean(p.getProperty("lightHud", Boolean.toString(lightHud)));
             clockHud = Boolean.parseBoolean(p.getProperty("clockHud", Boolean.toString(clockHud)));
             betterTooltips = Boolean.parseBoolean(p.getProperty("betterTooltips", Boolean.toString(betterTooltips)));
+            itemHighlight = Boolean.parseBoolean(p.getProperty("itemHighlight", Boolean.toString(itemHighlight)));
             hudX = Integer.parseInt(p.getProperty("hudX", Integer.toString(hudX)));
             hudY = Integer.parseInt(p.getProperty("hudY", Integer.toString(hudY)));
             hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", Integer.toString(hueSpeed)));
@@ -160,6 +162,7 @@ final class BurmaldaSettings {
         p.setProperty("lightHud", Boolean.toString(lightHud));
         p.setProperty("clockHud", Boolean.toString(clockHud));
         p.setProperty("betterTooltips", Boolean.toString(betterTooltips));
+        p.setProperty("itemHighlight", Boolean.toString(itemHighlight));
         p.setProperty("hudX", Integer.toString(hudX));
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));

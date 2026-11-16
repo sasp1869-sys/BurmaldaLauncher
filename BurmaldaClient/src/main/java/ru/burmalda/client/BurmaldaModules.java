@@ -84,6 +84,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.clockHud, v -> BurmaldaSettings.clockHud = v);
         add("Better Tooltips", Category.RENDER, "Добавляет ID предмета и прочность в подсказку",
                 () -> BurmaldaSettings.betterTooltips, v -> BurmaldaSettings.betterTooltips = v);
+        add("Item Highlight", Category.HUD, "Показывает выбранный предмет над панелью быстрого доступа",
+                () -> BurmaldaSettings.itemHighlight, v -> BurmaldaSettings.itemHighlight = v);
     }
 
     private static void add(String name, Category category, String description,
