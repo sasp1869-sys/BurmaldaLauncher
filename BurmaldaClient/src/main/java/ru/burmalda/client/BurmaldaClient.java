@@ -44,9 +44,17 @@ public final class BurmaldaClient implements ClientModInitializer {
             }
             if (BurmaldaSettings.rgb) hue = (hue + BurmaldaSettings.hueSpeed) % 360;
             updateFullbright(client);
+            updateSprint(client);
         });
 
         HudRenderCallback.EVENT.register((drawContext, tickCounter) -> renderHud(drawContext));
+    }
+
+    private static void updateSprint(MinecraftClient client) {
+        if (client.player == null || !BurmaldaSettings.sprint) return;
+        if (client.player.input.movementForward > 0.0F && client.player.getHungerManager().getFoodLevel() > 6) {
+            client.player.setSprinting(true);
+        }
     }
 
     private static void updateFullbright(MinecraftClient client) {

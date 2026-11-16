@@ -58,6 +58,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.performance, v -> BurmaldaSettings.performance = v);
         add("Fullbright", Category.RENDER, "Повышенная яркость только на клиенте",
                 () -> BurmaldaSettings.fullbright, v -> BurmaldaSettings.fullbright = v);
+        add("Sprint", Category.MOVEMENT, "Автоматически включает обычный спринт при движении вперёд",
+                () -> BurmaldaSettings.sprint, v -> BurmaldaSettings.sprint = v);
     }
 
     private static void add(String name, Category category, String description,
