@@ -224,19 +224,23 @@ public final class BurmaldaScreen extends Screen {
                 enabled ? (hovered ? 0xFF32977C : 0xFF287D68)
                         : (hovered ? 0xFF40516A : 0xFF303E52));
         String action = enabled ? "ENABLED  •  CLICK TO DISABLE" : "DISABLED  •  CLICK TO ENABLE";
-        context.drawCenteredTextWithShadow(textRenderer, Text.literal(action),
-                x + detailsWidth / 2, by + 10, 0xFFFFFFFF);
+        Text actionText = Text.literal(action);
+        context.drawText(textRenderer, actionText,
+                x + (detailsWidth - textRenderer.getWidth(actionText)) / 2, by + 10, 0xFFFFFFFF, false);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
+        // Avoid Minecraft background-blur post-processing; keep the menu and text crisp.
+        context.fill(0, 0, width, height, 0xB8000000);
         if (editor) {
             context.fill(width / 2 - 170, height / 2 - 100, width / 2 + 170, height / 2 + 130, 0xEE111927);
-            context.drawCenteredTextWithShadow(textRenderer, title, width / 2, height / 2 - 88, 0xFF72C5FF);
-            context.drawCenteredTextWithShadow(textRenderer,
-                    Text.literal("Перемещай HUD стрелками. F6 — открыть редактор."),
-                    width / 2, height / 2 - 72, 0xFFCCD5E2);
+            Text editorTitle = title;
+            context.drawText(textRenderer, editorTitle, width / 2 - textRenderer.getWidth(editorTitle) / 2,
+                    height / 2 - 88, 0xFF72C5FF, false);
+            Text editorHint = Text.literal("Перемещай HUD стрелками. F6 — открыть редактор.");
+            context.drawText(textRenderer, editorHint,
+                    width / 2 - textRenderer.getWidth(editorHint) / 2, height / 2 - 72, 0xFFCCD5E2, false);
             super.render(context, mouseX, mouseY, delta);
             return;
         }
@@ -275,8 +279,9 @@ public final class BurmaldaScreen extends Screen {
         context.disableScissor();
 
         if (modules.isEmpty()) {
-            context.drawCenteredTextWithShadow(textRenderer, Text.literal("No modules found"),
-                    listX + listWidth / 2, listTop + 20, 0xFF9BA9BB);
+            Text emptyText = Text.literal("No modules found");
+            context.drawText(textRenderer, emptyText,
+                    listX + (listWidth - textRenderer.getWidth(emptyText)) / 2, listTop + 20, 0xFF9BA9BB, false);
         }
         drawDetails(context, mouseX, mouseY);
         context.fill(listX, panelY + panelHeight - 27, panelX + panelWidth - 12,

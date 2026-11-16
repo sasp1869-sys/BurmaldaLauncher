@@ -100,6 +100,26 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.foodHud, v -> BurmaldaSettings.foodHud = v);
         add("Totem Counter", Category.HUD, "Считает тотемы бессмертия в инвентаре и хотбаре",
                 () -> BurmaldaSettings.totemCounter, v -> BurmaldaSettings.totemCounter = v);
+        add("Target Entity HUD", Category.HUD, "Показывает имя и тип сущности под прицелом",
+                () -> BurmaldaSettings.targetEntityHud, v -> BurmaldaSettings.targetEntityHud = v);
+        add("Target Block HUD", Category.HUD, "Показывает ID блока под прицелом",
+                () -> BurmaldaSettings.targetBlockHud, v -> BurmaldaSettings.targetBlockHud = v);
+        add("Memory HUD", Category.HUD, "Показывает использование памяти Java",
+                () -> BurmaldaSettings.memoryHud, v -> BurmaldaSettings.memoryHud = v);
+        add("Local Time HUD", Category.HUD, "Показывает локальное время компьютера",
+                () -> BurmaldaSettings.localTimeHud, v -> BurmaldaSettings.localTimeHud = v);
+        add("Day Counter", Category.HUD, "Показывает номер игрового дня",
+                () -> BurmaldaSettings.dayCounterHud, v -> BurmaldaSettings.dayCounterHud = v);
+        add("Weather HUD", Category.HUD, "Показывает дождь и грозу в текущем мире",
+                () -> BurmaldaSettings.weatherHud, v -> BurmaldaSettings.weatherHud = v);
+        add("Chunk HUD", Category.HUD, "Показывает координаты чанка и локальные координаты",
+                () -> BurmaldaSettings.chunkHud, v -> BurmaldaSettings.chunkHud = v);
+        add("Durability HUD", Category.HUD, "Показывает остаток прочности предмета в основной руке",
+                () -> BurmaldaSettings.durabilityHud, v -> BurmaldaSettings.durabilityHud = v);
+        add("Held Item HUD", Category.HUD, "Показывает название и количество предмета в основной руке",
+                () -> BurmaldaSettings.heldItemHud, v -> BurmaldaSettings.heldItemHud = v);
+        add("Experience HUD", Category.HUD, "Показывает уровень опыта и прогресс до следующего уровня",
+                () -> BurmaldaSettings.experienceHud, v -> BurmaldaSettings.experienceHud = v);
     }
 
     private static void add(String name, Category category, String description,

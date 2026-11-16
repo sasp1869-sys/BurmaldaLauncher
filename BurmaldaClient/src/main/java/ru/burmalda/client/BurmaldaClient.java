@@ -239,7 +239,17 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.clockHud ? 1 : 0)
                 + (BurmaldaSettings.potionHud ? Math.max(1, client.player.getStatusEffects().size()) : 0)
                 + (BurmaldaSettings.foodHud ? 1 : 0)
-                + (BurmaldaSettings.totemCounter ? 1 : 0);
+                + (BurmaldaSettings.totemCounter ? 1 : 0)
+                + (BurmaldaSettings.experienceHud ? 1 : 0)
+                + (BurmaldaSettings.heldItemHud ? 1 : 0)
+                + (BurmaldaSettings.durabilityHud ? 1 : 0)
+                + (BurmaldaSettings.chunkHud ? 1 : 0)
+                + (BurmaldaSettings.weatherHud ? 1 : 0)
+                + (BurmaldaSettings.dayCounterHud ? 1 : 0)
+                + (BurmaldaSettings.localTimeHud ? 1 : 0)
+                + (BurmaldaSettings.memoryHud ? 1 : 0)
+                + (BurmaldaSettings.targetBlockHud ? 1 : 0)
+                + (BurmaldaSettings.targetEntityHud ? 1 : 0);
         if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -381,6 +391,84 @@ public final class BurmaldaClient implements ClientModInitializer {
             }
             context.drawTextWithShadow(client.textRenderer,
                     Text.literal("Totems: " + totems), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+
+        if (BurmaldaSettings.experienceHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("XP: " + client.player.experienceLevel + "  •  " +
+                            Math.round(client.player.experienceProgress * 100) + "%"),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.heldItemHud) {
+            var stack = client.player.getMainHandStack();
+            String item = stack.isEmpty() ? "empty" : stack.getName().getString()
+                    + (stack.getCount() > 1 ? " x" + stack.getCount() : "");
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Held: " + item),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.durabilityHud) {
+            var stack = client.player.getMainHandStack();
+            String durability = !stack.isDamageable() ? "n/a"
+                    : Math.max(0, 100 - stack.getDamage() * 100 / stack.getMaxDamage()) + "%";
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Durability: " + durability),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.chunkHud) {
+            var pos = client.player.getBlockPos();
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Chunk: " + (pos.getX() >> 4) + ", " + (pos.getZ() >> 4)
+                            + "  •  Local: " + Math.floorMod(pos.getX(), 16) + ", " + Math.floorMod(pos.getZ(), 16)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.weatherHud && client.world != null) {
+            String weather = client.world.isThundering() ? "Thunderstorm"
+                    : client.world.isRaining() ? "Rain" : "Clear";
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Weather: " + weather),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.dayCounterHud && client.world != null) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Day: " + (client.world.getTimeOfDay() / 24000L + 1)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.localTimeHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Local time: " + java.time.LocalTime.now().format(
+                            java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss"))),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.memoryHud) {
+            Runtime runtime = Runtime.getRuntime();
+            long used = (runtime.totalMemory() - runtime.freeMemory()) / (1024L * 1024L);
+            long max = runtime.maxMemory() / (1024L * 1024L);
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Memory: " + used + " / " + max + " MB"),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.targetBlockHud && client.world != null
+                && client.crosshairTarget instanceof BlockHitResult blockHit) {
+            var state = client.world.getBlockState(blockHit.getBlockPos());
+            String blockId = net.minecraft.registry.Registries.BLOCK.getId(state.getBlock()).toString();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Block: " + blockId),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.targetEntityHud
+                && client.crosshairTarget instanceof net.minecraft.util.hit.EntityHitResult entityHit) {
+            var entity = entityHit.getEntity();
+            String typeId = net.minecraft.registry.Registries.ENTITY_TYPE.getId(entity.getType()).toString();
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Entity: " + entity.getName().getString() + " (" + typeId + ")"),
+                    x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
         }
         if (BurmaldaSettings.keystrokesHud) {
