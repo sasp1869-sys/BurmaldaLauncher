@@ -20,6 +20,7 @@ public final class BurmaldaClient implements ClientModInitializer {
     private static int hue;
     private static double previousGamma = -1.0;
     private static boolean previousAutoJump;
+    private static boolean autoJumpWasEnabled;
 
     @Override
     public void onInitializeClient() {
@@ -118,10 +119,13 @@ public final class BurmaldaClient implements ClientModInitializer {
 
     private static void updateAutoJump(MinecraftClient client) {
         if (BurmaldaSettings.autoJump) {
-            previousAutoJump = true;
+            if (!previousAutoJump) {
+                autoJumpWasEnabled = client.options.getAutoJump().getValue();
+                previousAutoJump = true;
+            }
             if (!client.options.getAutoJump().getValue()) client.options.getAutoJump().setValue(true);
         } else if (previousAutoJump) {
-            client.options.getAutoJump().setValue(false);
+            client.options.getAutoJump().setValue(autoJumpWasEnabled);
             previousAutoJump = false;
         }
     }
