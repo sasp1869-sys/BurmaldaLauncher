@@ -19,6 +19,11 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install Minecraft launcher libraries
+        run: |
+          dotnet add BurmaldaLauncher.csproj package CmlLib.Core --version 4.1.0
+          dotnet add BurmaldaLauncher.csproj package CmlLib.Core.Auth.Microsoft --version 3.4.0
+
       - name: Build Windows EXE
         run: dotnet publish BurmaldaLauncher.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish
 
