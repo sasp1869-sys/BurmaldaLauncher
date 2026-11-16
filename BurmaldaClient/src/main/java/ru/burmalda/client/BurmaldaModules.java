@@ -88,6 +88,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.clockHud, v -> BurmaldaSettings.clockHud = v);
         add("Better Tooltips", Category.RENDER, "Добавляет ID предмета и прочность в подсказку",
                 () -> BurmaldaSettings.betterTooltips, v -> BurmaldaSettings.betterTooltips = v);
+        add("Potion HUD", Category.HUD, "Показывает активные эффекты и оставшееся время",
+                () -> BurmaldaSettings.potionHud, v -> BurmaldaSettings.potionHud = v);
         add("Item Highlight", Category.HUD, "Показывает выбранный предмет над панелью быстрого доступа",
                 () -> BurmaldaSettings.itemHighlight, v -> BurmaldaSettings.itemHighlight = v);
         add("Copy Coordinates", Category.MISC, "Копирует координаты блока по F8",

@@ -138,6 +138,10 @@ public final class BurmaldaScreen extends Screen {
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
+    private void drawCrispText(DrawContext context, Text text, int x, int y, int color) {
+        context.drawText(textRenderer, text, x, y, color, false);
+    }
+
     private void drawCategory(DrawContext context, BurmaldaModules.Category category,
                               int index, int mouseX, int mouseY) {
         int x = panelX + 10;

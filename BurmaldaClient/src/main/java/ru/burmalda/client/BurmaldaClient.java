@@ -236,7 +236,8 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.keystrokesHud ? 2 : 0)
                 + (BurmaldaSettings.dimensionHud ? 1 : 0)
                 + (BurmaldaSettings.lightHud ? 1 : 0)
-                + (BurmaldaSettings.clockHud ? 1 : 0);
+                + (BurmaldaSettings.clockHud ? 1 : 0)
+                + (BurmaldaSettings.potionHud ? Math.max(1, client.player.getStatusEffects().size()) : 0);
         if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -346,6 +347,22 @@ public final class BurmaldaClient implements ClientModInitializer {
                     Text.literal(String.format(java.util.Locale.ROOT, "World time: %02d:%02d", hours, minutes)),
                     x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
+        }
+        if (BurmaldaSettings.potionHud) {
+            if (client.player.getStatusEffects().isEmpty()) {
+                context.drawTextWithShadow(client.textRenderer, Text.literal("Effects: none"), x, currentY, 0xFFB8C5D6);
+                currentY += lineHeight;
+            } else {
+                for (var effect : client.player.getStatusEffects()) {
+                    String effectName = effect.getEffectType().value().getName().getString();
+                    int amplifier = effect.getAmplifier() + 1;
+                    int duration = effect.getDuration();
+                    String time = duration == -1 ? "∞" : String.format(java.util.Locale.ROOT, "%d:%02d", duration / 1200, (duration / 20) % 60);
+                    context.drawTextWithShadow(client.textRenderer,
+                            Text.literal(effectName + " " + amplifier + "  " + time), x, currentY, 0xFFFFFFFF);
+                    currentY += lineHeight;
+                }
+            }
         }
         if (BurmaldaSettings.keystrokesHud) {
             String keys = (client.options.forwardKey.isPressed() ? "[W]" : " W ")
