@@ -160,6 +160,26 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.targetHealthHud, v -> BurmaldaSettings.targetHealthHud = v);
         add("Spawn Coordinates", Category.WORLD, "Показывает координаты точки спавна мира",
                 () -> BurmaldaSettings.spawnCoordsHud, v -> BurmaldaSettings.spawnCoordsHud = v);
+        add("Saturation HUD", Category.PLAYER, "Показывает уровень насыщения еды",
+                () -> BurmaldaSettings.saturationHud, v -> BurmaldaSettings.saturationHud = v);
+        add("Ground Status", Category.MOVEMENT, "Показывает, стоит ли игрок на земле",
+                () -> BurmaldaSettings.groundStatusHud, v -> BurmaldaSettings.groundStatusHud = v);
+        add("Sprint Status", Category.MOVEMENT, "Показывает активен ли спринт",
+                () -> BurmaldaSettings.sprintStatusHud, v -> BurmaldaSettings.sprintStatusHud = v);
+        add("Swimming Status", Category.MOVEMENT, "Показывает, плывёт ли игрок",
+                () -> BurmaldaSettings.swimmingStatusHud, v -> BurmaldaSettings.swimmingStatusHud = v);
+        add("Elytra Status", Category.MOVEMENT, "Показывает, раскрыты ли элитры в полёте",
+                () -> BurmaldaSettings.elytraStatusHud, v -> BurmaldaSettings.elytraStatusHud = v);
+        add("Block Light HUD", Category.WORLD, "Показывает уровень света от блоков у игрока",
+                () -> BurmaldaSettings.blockLightHud, v -> BurmaldaSettings.blockLightHud = v);
+        add("Sky Light HUD", Category.WORLD, "Показывает уровень небесного света у игрока",
+                () -> BurmaldaSettings.skyLightHud, v -> BurmaldaSettings.skyLightHud = v);
+        add("Moon Phase HUD", Category.WORLD, "Показывает текущую фазу луны",
+                () -> BurmaldaSettings.moonPhaseHud, v -> BurmaldaSettings.moonPhaseHud = v);
+        add("Biome Temperature", Category.WORLD, "Показывает температуру текущего биома",
+                () -> BurmaldaSettings.biomeTemperatureHud, v -> BurmaldaSettings.biomeTemperatureHud = v);
+        add("Inventory Usage", Category.INVENTORY, "Показывает занятые слоты инвентаря",
+                () -> BurmaldaSettings.inventoryUsageHud, v -> BurmaldaSettings.inventoryUsageHud = v);
     }
 
     private static void add(String name, Category category, String description,

@@ -269,7 +269,17 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.shieldStatusHud ? 1 : 0)
                 + (BurmaldaSettings.targetBlockPosHud ? 1 : 0)
                 + (BurmaldaSettings.targetHealthHud ? 1 : 0)
-                + (BurmaldaSettings.spawnCoordsHud ? 1 : 0);
+                + (BurmaldaSettings.spawnCoordsHud ? 1 : 0)
+                + (BurmaldaSettings.saturationHud ? 1 : 0)
+                + (BurmaldaSettings.groundStatusHud ? 1 : 0)
+                + (BurmaldaSettings.sprintStatusHud ? 1 : 0)
+                + (BurmaldaSettings.swimmingStatusHud ? 1 : 0)
+                + (BurmaldaSettings.elytraStatusHud ? 1 : 0)
+                + (BurmaldaSettings.blockLightHud ? 1 : 0)
+                + (BurmaldaSettings.skyLightHud ? 1 : 0)
+                + (BurmaldaSettings.moonPhaseHud ? 1 : 0)
+                + (BurmaldaSettings.biomeTemperatureHud ? 1 : 0)
+                + (BurmaldaSettings.inventoryUsageHud ? 1 : 0);
         if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -645,6 +655,66 @@ public final class BurmaldaClient implements ClientModInitializer {
             var spawn = client.world.getSpawnPos();
             context.drawTextWithShadow(client.textRenderer,
                     Text.literal("World spawn: " + spawn.getX() + " " + spawn.getY() + " " + spawn.getZ()),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+
+        if (BurmaldaSettings.saturationHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Saturation: %.1f", client.player.getHungerManager().getSaturationLevel())),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.groundStatusHud) {
+            context.drawTextWithShadow(client.textRenderer, Text.literal("On ground: " + (client.player.isOnGround() ? "yes" : "no")),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.sprintStatusHud) {
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Sprinting: " + (client.player.isSprinting() ? "yes" : "no")),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.swimmingStatusHud) {
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Swimming: " + (client.player.isSwimming() ? "yes" : "no")),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.elytraStatusHud) {
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Elytra: " + (client.player.isFallFlying() ? "flying" : "inactive")),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.blockLightHud && client.world != null) {
+            int light = client.world.getLightLevel(net.minecraft.world.LightType.BLOCK, client.player.getBlockPos());
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Block light: " + light + "/15"),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.skyLightHud && client.world != null) {
+            int light = client.world.getLightLevel(net.minecraft.world.LightType.SKY, client.player.getBlockPos());
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Sky light: " + light + "/15"),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.moonPhaseHud && client.world != null) {
+            String[] phases = {"Full moon", "Waning gibbous", "Third quarter", "Waning crescent",
+                    "New moon", "Waxing crescent", "First quarter", "Waxing gibbous"};
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Moon: " + phases[client.world.getMoonPhase() & 7]),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.biomeTemperatureHud && client.world != null) {
+            float temperature = client.world.getBiome(client.player.getBlockPos()).value().getTemperature();
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Biome temperature: %.2f", temperature)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.inventoryUsageHud) {
+            long occupied = client.player.getInventory().main.stream().filter(stack -> !stack.isEmpty()).count();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Inventory: " + occupied + "/36 slots"),
                     x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
         }
