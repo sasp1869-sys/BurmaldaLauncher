@@ -92,6 +92,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.itemHighlight, v -> BurmaldaSettings.itemHighlight = v);
         add("Copy Coordinates", Category.MISC, "Копирует координаты блока по F8",
                 () -> BurmaldaSettings.copyCoordinates, v -> BurmaldaSettings.copyCoordinates = v);
+        add("Auto Tool", Category.PLAYER, "Выбирает лучший инструмент из хотбара при начале добычи блока",
+                () -> BurmaldaSettings.autoTool, v -> BurmaldaSettings.autoTool = v);
     }
 
     private static void add(String name, Category category, String description,

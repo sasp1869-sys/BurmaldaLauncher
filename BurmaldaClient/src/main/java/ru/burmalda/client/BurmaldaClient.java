@@ -11,6 +11,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.BlockHitResult;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -73,6 +74,7 @@ public final class BurmaldaClient implements ClientModInitializer {
             if (BurmaldaSettings.rgb) hue = (hue + BurmaldaSettings.hueSpeed) % 360;
             updateFullbright(client);
             updateSprint(client);
+            updateAutoTool(client);
             updateAutoWalk(client);
             updateAutoJump(client);
             updateCameraTweaks(client);
@@ -139,6 +141,28 @@ public final class BurmaldaClient implements ClientModInitializer {
         if (client.player == null || !BurmaldaSettings.sprint) return;
         if (client.player.input.movementForward > 0.0F && client.player.getHungerManager().getFoodLevel() > 6) {
             client.player.setSprinting(true);
+        }
+    }
+
+    private static void updateAutoTool(MinecraftClient client) {
+        if (!BurmaldaSettings.autoTool || client.player == null || client.world == null
+                || client.currentScreen != null || !client.options.attackKey.isPressed()
+                || !(client.crosshairTarget instanceof BlockHitResult hit)) return;
+
+        var state = client.world.getBlockState(hit.getBlockPos());
+        if (state.isAir()) return;
+
+        int bestSlot = client.player.getInventory().selectedSlot;
+        float bestSpeed = client.player.getInventory().getStack(bestSlot).getMiningSpeedMultiplier(state);
+        for (int slot = 0; slot < 9; slot++) {
+            float speed = client.player.getInventory().getStack(slot).getMiningSpeedMultiplier(state);
+            if (speed > bestSpeed + 0.01F) {
+                bestSpeed = speed;
+                bestSlot = slot;
+            }
+        }
+        if (bestSlot != client.player.getInventory().selectedSlot) {
+            client.player.getInventory().selectedSlot = bestSlot;
         }
     }
 
