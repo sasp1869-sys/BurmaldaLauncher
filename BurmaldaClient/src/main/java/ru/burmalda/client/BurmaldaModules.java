@@ -10,7 +10,7 @@ final class BurmaldaModules {
         MODULES("Modules"), CONFIG("Config"), GUI("GUI"), HUD("HUD"),
         FRIENDS("Friends"), MACROS("Macros"), PROFILES("Profiles"),
         BARITONE("Baritone"), COMBAT("Combat"), PLAYER("Player"),
-        MOVEMENT("Movement"), RENDER("Render"), WORLD("World"),
+        MOVEMENT("Movement"), RENDER("Render"), WORLD("World"), INVENTORY("Inventory"), TARGET("Target"),
         MISC("Misc"), SEARCH("Search");
 
         final String title;
@@ -140,6 +140,26 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.targetDistanceHud, v -> BurmaldaSettings.targetDistanceHud = v);
         add("Spawn Distance HUD", Category.HUD, "Показывает расстояние до точки спавна мира",
                 () -> BurmaldaSettings.spawnDistanceHud, v -> BurmaldaSettings.spawnDistanceHud = v);
+        add("Health HUD", Category.PLAYER, "Показывает здоровье игрока в сердцах",
+                () -> BurmaldaSettings.healthHud, v -> BurmaldaSettings.healthHud = v);
+        add("Absorption HUD", Category.PLAYER, "Показывает дополнительные сердца от поглощения",
+                () -> BurmaldaSettings.absorptionHud, v -> BurmaldaSettings.absorptionHud = v);
+        add("Offhand HUD", Category.INVENTORY, "Показывает предмет во второй руке",
+                () -> BurmaldaSettings.offhandHud, v -> BurmaldaSettings.offhandHud = v);
+        add("Arrow Counter", Category.INVENTORY, "Считает стрелы в инвентаре",
+                () -> BurmaldaSettings.arrowCounterHud, v -> BurmaldaSettings.arrowCounterHud = v);
+        add("Pearl Counter", Category.INVENTORY, "Считает эндер-жемчуг в инвентаре",
+                () -> BurmaldaSettings.pearlCounterHud, v -> BurmaldaSettings.pearlCounterHud = v);
+        add("Golden Apple Counter", Category.INVENTORY, "Считает золотые яблоки в инвентаре",
+                () -> BurmaldaSettings.appleCounterHud, v -> BurmaldaSettings.appleCounterHud = v);
+        add("Shield Status", Category.INVENTORY, "Показывает прочность щита во второй или основной руке",
+                () -> BurmaldaSettings.shieldStatusHud, v -> BurmaldaSettings.shieldStatusHud = v);
+        add("Target Block Position", Category.TARGET, "Показывает координаты блока под прицелом",
+                () -> BurmaldaSettings.targetBlockPosHud, v -> BurmaldaSettings.targetBlockPosHud = v);
+        add("Target Health", Category.TARGET, "Показывает здоровье сущности под прицелом",
+                () -> BurmaldaSettings.targetHealthHud, v -> BurmaldaSettings.targetHealthHud = v);
+        add("Spawn Coordinates", Category.WORLD, "Показывает координаты точки спавна мира",
+                () -> BurmaldaSettings.spawnCoordsHud, v -> BurmaldaSettings.spawnCoordsHud = v);
     }
 
     private static void add(String name, Category category, String description,

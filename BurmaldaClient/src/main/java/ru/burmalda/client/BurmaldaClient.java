@@ -259,7 +259,17 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.nearbyPlayersHud ? 1 : 0)
                 + (BurmaldaSettings.nearbyMobsHud ? 1 : 0)
                 + (BurmaldaSettings.targetDistanceHud ? 1 : 0)
-                + (BurmaldaSettings.spawnDistanceHud ? 1 : 0);
+                + (BurmaldaSettings.spawnDistanceHud ? 1 : 0)
+                + (BurmaldaSettings.healthHud ? 1 : 0)
+                + (BurmaldaSettings.absorptionHud ? 1 : 0)
+                + (BurmaldaSettings.offhandHud ? 1 : 0)
+                + (BurmaldaSettings.arrowCounterHud ? 1 : 0)
+                + (BurmaldaSettings.pearlCounterHud ? 1 : 0)
+                + (BurmaldaSettings.appleCounterHud ? 1 : 0)
+                + (BurmaldaSettings.shieldStatusHud ? 1 : 0)
+                + (BurmaldaSettings.targetBlockPosHud ? 1 : 0)
+                + (BurmaldaSettings.targetHealthHud ? 1 : 0)
+                + (BurmaldaSettings.spawnCoordsHud ? 1 : 0);
         if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -551,6 +561,90 @@ public final class BurmaldaClient implements ClientModInitializer {
             double distance = Math.sqrt(client.player.getBlockPos().getSquaredDistance(client.world.getSpawnPos()));
             context.drawTextWithShadow(client.textRenderer,
                     Text.literal(String.format(java.util.Locale.ROOT, "Spawn distance: %.1f blocks", distance)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+
+
+        if (BurmaldaSettings.healthHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Health: %.1f / 10 hearts", client.player.getHealth() / 2.0f)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.absorptionHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Absorption: %.1f hearts", client.player.getAbsorptionAmount() / 2.0f)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.offhandHud) {
+            var offhand = client.player.getOffHandStack();
+            String value = offhand.isEmpty() ? "empty" : offhand.getName().getString()
+                    + (offhand.getCount() > 1 ? " x" + offhand.getCount() : "");
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Offhand: " + value),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.arrowCounterHud) {
+            int count = client.player.getInventory().main.stream()
+                    .filter(stack -> stack.isOf(net.minecraft.item.Items.ARROW)
+                            || stack.isOf(net.minecraft.item.Items.SPECTRAL_ARROW)
+                            || stack.isOf(net.minecraft.item.Items.TIPPED_ARROW))
+                    .mapToInt(net.minecraft.item.ItemStack::getCount).sum();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Arrows: " + count),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.pearlCounterHud) {
+            int count = client.player.getInventory().main.stream()
+                    .filter(stack -> stack.isOf(net.minecraft.item.Items.ENDER_PEARL))
+                    .mapToInt(net.minecraft.item.ItemStack::getCount).sum();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Ender Pearls: " + count),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.appleCounterHud) {
+            int count = client.player.getInventory().main.stream()
+                    .filter(stack -> stack.isOf(net.minecraft.item.Items.GOLDEN_APPLE)
+                            || stack.isOf(net.minecraft.item.Items.ENCHANTED_GOLDEN_APPLE))
+                    .mapToInt(net.minecraft.item.ItemStack::getCount).sum();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Golden Apples: " + count),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.shieldStatusHud) {
+            var main = client.player.getMainHandStack();
+            var off = client.player.getOffHandStack();
+            var shield = main.isOf(net.minecraft.item.Items.SHIELD) ? main
+                    : off.isOf(net.minecraft.item.Items.SHIELD) ? off : net.minecraft.item.ItemStack.EMPTY;
+            String value = shield.isEmpty() ? "not equipped" : shield.isDamageable()
+                    ? Math.max(0, 100 - shield.getDamage() * 100 / shield.getMaxDamage()) + "%" : "ready";
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Shield: " + value),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.targetBlockPosHud) {
+            String value = client.crosshairTarget instanceof BlockHitResult hit
+                    ? hit.getBlockPos().getX() + " " + hit.getBlockPos().getY() + " " + hit.getBlockPos().getZ()
+                    : "--";
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Target block: " + value),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.targetHealthHud) {
+            String value = client.crosshairTarget instanceof net.minecraft.util.hit.EntityHitResult hit
+                    && hit.getEntity() instanceof net.minecraft.entity.LivingEntity living
+                    ? String.format(java.util.Locale.ROOT, "%.1f / %.1f", living.getHealth(), living.getMaxHealth())
+                    : "--";
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Target health: " + value),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.spawnCoordsHud && client.world != null) {
+            var spawn = client.world.getSpawnPos();
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("World spawn: " + spawn.getX() + " " + spawn.getY() + " " + spawn.getZ()),
                     x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
         }
