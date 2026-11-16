@@ -249,7 +249,17 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.localTimeHud ? 1 : 0)
                 + (BurmaldaSettings.memoryHud ? 1 : 0)
                 + (BurmaldaSettings.targetBlockHud ? 1 : 0)
-                + (BurmaldaSettings.targetEntityHud ? 1 : 0);
+                + (BurmaldaSettings.targetEntityHud ? 1 : 0)
+                + (BurmaldaSettings.emptySlotsHud ? 1 : 0)
+                + (BurmaldaSettings.selectedSlotHud ? 1 : 0)
+                + (BurmaldaSettings.facingAngleHud ? 1 : 0)
+                + (BurmaldaSettings.verticalSpeedHud ? 1 : 0)
+                + (BurmaldaSettings.fallDistanceHud ? 1 : 0)
+                + (BurmaldaSettings.airHud ? 1 : 0)
+                + (BurmaldaSettings.nearbyPlayersHud ? 1 : 0)
+                + (BurmaldaSettings.nearbyMobsHud ? 1 : 0)
+                + (BurmaldaSettings.targetDistanceHud ? 1 : 0)
+                + (BurmaldaSettings.spawnDistanceHud ? 1 : 0);
         if (lines == 0 && !BurmaldaSettings.itemHighlight) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -471,6 +481,80 @@ public final class BurmaldaClient implements ClientModInitializer {
                     x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
         }
+
+        if (BurmaldaSettings.emptySlotsHud) {
+            long empty = client.player.getInventory().main.stream().filter(net.minecraft.item.ItemStack::isEmpty).count();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Empty slots: " + empty),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.selectedSlotHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Hotbar slot: " + (client.player.getInventory().selectedSlot + 1) + "/9"),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.facingAngleHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Yaw: %.1f°", client.player.getYaw())),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.verticalSpeedHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Vertical speed: %.2f b/s",
+                            client.player.getVelocity().y * 20.0)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.fallDistanceHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Fall distance: %.1f blocks",
+                            client.player.fallDistance)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.airHud) {
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Air: " + client.player.getAir() + "/" + client.player.getMaxAir()),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.nearbyPlayersHud && client.world != null) {
+            long count = client.world.getPlayers().stream()
+                    .filter(player -> player != client.player && player.squaredDistanceTo(client.player) <= 64.0 * 64.0)
+                    .count();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Players nearby (64): " + count),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.nearbyMobsHud && client.world != null) {
+            int count = client.world.getEntitiesByClass(net.minecraft.entity.mob.MobEntity.class,
+                    client.player.getBoundingBox().expand(16.0), mob -> true).size();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Mobs nearby (16): " + count),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.targetDistanceHud
+                && client.crosshairTarget instanceof net.minecraft.util.hit.EntityHitResult target) {
+            double distance = client.player.distanceTo(target.getEntity());
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Target distance: %.1f blocks", distance)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        } else if (BurmaldaSettings.targetDistanceHud) {
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Target distance: --"),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.spawnDistanceHud && client.world != null) {
+            double distance = Math.sqrt(client.player.getBlockPos().getSquaredDistance(client.world.getSpawnPos()));
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "Spawn distance: %.1f blocks", distance)),
+                    x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+
         if (BurmaldaSettings.keystrokesHud) {
             String keys = (client.options.forwardKey.isPressed() ? "[W]" : " W ")
                     + (client.options.leftKey.isPressed() ? "[A]" : " A ")

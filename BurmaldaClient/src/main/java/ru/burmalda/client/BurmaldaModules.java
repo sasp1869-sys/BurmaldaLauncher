@@ -120,6 +120,26 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.heldItemHud, v -> BurmaldaSettings.heldItemHud = v);
         add("Experience HUD", Category.HUD, "Показывает уровень опыта и прогресс до следующего уровня",
                 () -> BurmaldaSettings.experienceHud, v -> BurmaldaSettings.experienceHud = v);
+        add("Empty Slots HUD", Category.HUD, "Показывает количество пустых слотов инвентаря",
+                () -> BurmaldaSettings.emptySlotsHud, v -> BurmaldaSettings.emptySlotsHud = v);
+        add("Selected Slot HUD", Category.HUD, "Показывает выбранный слот хотбара",
+                () -> BurmaldaSettings.selectedSlotHud, v -> BurmaldaSettings.selectedSlotHud = v);
+        add("Facing Angle HUD", Category.HUD, "Показывает точный угол поворота игрока",
+                () -> BurmaldaSettings.facingAngleHud, v -> BurmaldaSettings.facingAngleHud = v);
+        add("Vertical Speed HUD", Category.HUD, "Показывает вертикальную скорость игрока",
+                () -> BurmaldaSettings.verticalSpeedHud, v -> BurmaldaSettings.verticalSpeedHud = v);
+        add("Fall Distance HUD", Category.HUD, "Показывает текущую дистанцию падения",
+                () -> BurmaldaSettings.fallDistanceHud, v -> BurmaldaSettings.fallDistanceHud = v);
+        add("Air HUD", Category.HUD, "Показывает запас воздуха под водой",
+                () -> BurmaldaSettings.airHud, v -> BurmaldaSettings.airHud = v);
+        add("Nearby Players HUD", Category.HUD, "Считает игроков в радиусе 64 блоков",
+                () -> BurmaldaSettings.nearbyPlayersHud, v -> BurmaldaSettings.nearbyPlayersHud = v);
+        add("Nearby Mobs HUD", Category.HUD, "Считает мобов в радиусе 16 блоков",
+                () -> BurmaldaSettings.nearbyMobsHud, v -> BurmaldaSettings.nearbyMobsHud = v);
+        add("Target Distance HUD", Category.HUD, "Показывает расстояние до сущности под прицелом",
+                () -> BurmaldaSettings.targetDistanceHud, v -> BurmaldaSettings.targetDistanceHud = v);
+        add("Spawn Distance HUD", Category.HUD, "Показывает расстояние до точки спавна мира",
+                () -> BurmaldaSettings.spawnDistanceHud, v -> BurmaldaSettings.spawnDistanceHud = v);
     }
 
     private static void add(String name, Category category, String description,
