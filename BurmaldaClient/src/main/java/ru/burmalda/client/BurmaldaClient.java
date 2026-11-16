@@ -25,6 +25,8 @@ public final class BurmaldaClient implements ClientModInitializer {
     private static boolean previousAutoJump;
     private static boolean autoJumpWasEnabled;
     private static boolean autoWalkWasActive;
+    private static boolean cameraTweaksWasEnabled;
+    private static boolean previousBobView;
 
     @Override
     public void onInitializeClient() {
@@ -73,6 +75,7 @@ public final class BurmaldaClient implements ClientModInitializer {
             updateSprint(client);
             updateAutoWalk(client);
             updateAutoJump(client);
+            updateCameraTweaks(client);
         });
 
         ItemTooltipCallback.EVENT.register((stack, tooltipContext, tooltipType, lines) -> {
@@ -159,6 +162,21 @@ public final class BurmaldaClient implements ClientModInitializer {
         } else if (previousAutoJump) {
             client.options.getAutoJump().setValue(autoJumpWasEnabled);
             previousAutoJump = false;
+        }
+    }
+
+    private static void updateCameraTweaks(MinecraftClient client) {
+        if (BurmaldaSettings.cameraTweaks) {
+            if (!cameraTweaksWasEnabled) {
+                previousBobView = client.options.getBobView().getValue();
+                cameraTweaksWasEnabled = true;
+            }
+            if (client.options.getBobView().getValue()) {
+                client.options.getBobView().setValue(false);
+            }
+        } else if (cameraTweaksWasEnabled) {
+            client.options.getBobView().setValue(previousBobView);
+            cameraTweaksWasEnabled = false;
         }
     }
 

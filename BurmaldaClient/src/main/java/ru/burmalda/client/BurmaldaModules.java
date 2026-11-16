@@ -58,6 +58,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.performance, v -> BurmaldaSettings.performance = v);
         add("Fullbright", Category.RENDER, "Повышенная яркость только на клиенте",
                 () -> BurmaldaSettings.fullbright, v -> BurmaldaSettings.fullbright = v);
+        add("Camera Tweaks", Category.RENDER, "Отключает тряску камеры при ходьбе; исходная настройка восстанавливается при выключении",
+                () -> BurmaldaSettings.cameraTweaks, v -> BurmaldaSettings.cameraTweaks = v);
         add("Sprint", Category.MOVEMENT, "Автоматически включает обычный спринт при движении вперёд",
                 () -> BurmaldaSettings.sprint, v -> BurmaldaSettings.sprint = v);
         add("Auto Walk", Category.MOVEMENT, "Удерживает движение вперёд, пока модуль включён",

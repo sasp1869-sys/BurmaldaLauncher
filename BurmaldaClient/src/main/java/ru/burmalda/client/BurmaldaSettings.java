@@ -23,6 +23,7 @@ final class BurmaldaSettings {
     static boolean compact = false;
     static boolean performance = false;
     static boolean fullbright = false;
+    static boolean cameraTweaks = false;
     static boolean sprint = false;
     static boolean autoWalk = false;
     static boolean autoJump = false;
@@ -119,6 +120,7 @@ final class BurmaldaSettings {
             compact = Boolean.parseBoolean(p.getProperty("compact", Boolean.toString(compact)));
             performance = Boolean.parseBoolean(p.getProperty("performance", Boolean.toString(performance)));
             fullbright = Boolean.parseBoolean(p.getProperty("fullbright", Boolean.toString(fullbright)));
+            cameraTweaks = Boolean.parseBoolean(p.getProperty("cameraTweaks", Boolean.toString(cameraTweaks)));
             sprint = Boolean.parseBoolean(p.getProperty("sprint", Boolean.toString(sprint)));
             autoWalk = Boolean.parseBoolean(p.getProperty("autoWalk", Boolean.toString(autoWalk)));
             autoJump = Boolean.parseBoolean(p.getProperty("autoJump", Boolean.toString(autoJump)));
@@ -154,6 +156,7 @@ final class BurmaldaSettings {
         p.setProperty("compact", Boolean.toString(compact));
         p.setProperty("performance", Boolean.toString(performance));
         p.setProperty("fullbright", Boolean.toString(fullbright));
+        p.setProperty("cameraTweaks", Boolean.toString(cameraTweaks));
         p.setProperty("sprint", Boolean.toString(sprint));
         p.setProperty("autoWalk", Boolean.toString(autoWalk));
         p.setProperty("autoJump", Boolean.toString(autoJump));
