@@ -6,10 +6,6 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Windows;
 using MessageBox = System.Windows.MessageBox;
-using CmlLib.Core;
-using CmlLib.Core.Auth;
-using CmlLib.Core.Auth.Microsoft;
-using CmlLib.Core.ProcessBuilder;
 
 namespace BurmaldaLauncher;
 
@@ -18,6 +14,7 @@ public partial class MainWindow : Window
     private const string ClientFileName = "BurmaldaClient.jar";
     private static readonly HttpClient Http = CreateHttpClient();
     private string? _gameDirectory;
+    private string? _legacyLauncherPath;
     private readonly string _settingsDirectory =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BurmaldaLauncher");
     private string SettingsPath => Path.Combine(_settingsDirectory, "settings.json");
@@ -34,6 +31,7 @@ public partial class MainWindow : Window
                 _gameDirectory = candidate;
         }
         RefreshGamePath();
+        RefreshFabricVersions();
     }
 
     private static HttpClient CreateHttpClient()
@@ -51,6 +49,8 @@ public partial class MainWindow : Window
             if (!File.Exists(SettingsPath)) return;
             var settings = JsonSerializer.Deserialize<LauncherSettings>(File.ReadAllText(SettingsPath));
             _gameDirectory = settings?.GameDirectory;
+            _legacyLauncherPath = settings?.LegacyLauncherPath;
+            LegacyPathText.Text = string.IsNullOrWhiteSpace(_legacyLauncherPath) ? "Legacy Launcher не выбран" : _legacyLauncherPath;
             if (!string.IsNullOrWhiteSpace(settings?.ReleaseRepository))
                 ReleaseRepoText.Text = settings.ReleaseRepository;
         }
@@ -62,7 +62,7 @@ public partial class MainWindow : Window
         try
         {
             Directory.CreateDirectory(_settingsDirectory);
-            var settings = new LauncherSettings(_gameDirectory, ReleaseRepoText.Text.Trim());
+            var settings = new LauncherSettings(_gameDirectory, ReleaseRepoText.Text.Trim(), _legacyLauncherPath);
             File.WriteAllText(SettingsPath, JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception ex)
@@ -89,6 +89,7 @@ public partial class MainWindow : Window
         {
             _gameDirectory = dialog.SelectedPath;
             RefreshGamePath();
+            RefreshFabricVersions();
             SaveSettings();
             StatusText.Text = "Папка игры выбрана";
         }
@@ -228,81 +229,70 @@ public partial class MainWindow : Window
     }
 
 
-    private async void Play_Click(object sender, RoutedEventArgs e)
+    private void ChooseLegacy_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = "Выбери исполняемый файл Legacy Launcher",
+            Filter = "Приложение (*.exe)|*.exe",
+            CheckFileExists = true
+        };
+        if (dialog.ShowDialog() != true) return;
+        _legacyLauncherPath = dialog.FileName;
+        LegacyPathText.Text = _legacyLauncherPath;
+        SaveSettings();
+        StatusText.Text = "Legacy Launcher выбран";
+    }
+
+    private void RefreshFabricVersions()
+    {
+        if (string.IsNullOrWhiteSpace(_gameDirectory)) return;
+        var versionsDirectory = Path.Combine(_gameDirectory, "versions");
+        if (!Directory.Exists(versionsDirectory)) return;
+        var versions = Directory.GetDirectories(versionsDirectory)
+            .Select(Path.GetFileName)
+            .Where(name => name is not null && name.Contains("fabric", StringComparison.OrdinalIgnoreCase) && name.Contains("1.21.1", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(name => name)
+            .ToList();
+        VersionCombo.ItemsSource = versions;
+        if (versions.Count > 0) VersionCombo.SelectedIndex = 0;
+    }
+
+    private void Play_Click(object sender, RoutedEventArgs e)
     {
         if (!EnsureGameDirectory()) return;
-
-        var versionId = FindFabric1211Version();
-        if (versionId is null)
+        if (string.IsNullOrWhiteSpace(_legacyLauncherPath) || !File.Exists(_legacyLauncherPath))
         {
-            MessageBox.Show(
-                "Не найдена установленная версия Fabric для Minecraft 1.21.1. Сначала установи Fabric 1.21.1 в обычном Minecraft Launcher и один раз запусти её.",
-                "Fabric не найден");
+            MessageBox.Show("Сначала выбери LegacyLauncher.exe.", "Legacy Launcher не выбран");
+            return;
+        }
+        if (VersionCombo.SelectedItem is not string version || string.IsNullOrWhiteSpace(version))
+        {
+            MessageBox.Show("Не найдена Fabric 1.21.1. Сначала установи эту версию в Legacy Launcher.", "Версия не найдена");
             return;
         }
 
-        SetBusy(true, "Подключаю Microsoft-аккаунт...");
         try
         {
-            // Microsoft OAuth is handled by the authentication library; the launcher never asks for or stores the password.
-            var loginHandler = JELoginHandlerBuilder.BuildDefault();
-            var session = await loginHandler.Authenticate();
-
-            SetBusy(true, "Проверяю файлы Minecraft и Fabric...");
-            var minecraftPath = new MinecraftPath(_gameDirectory!);
-            var launcher = new MinecraftLauncher(minecraftPath);
-            launcher.FileProgressChanged += (_, args) =>
-                Dispatcher.Invoke(() => StatusText.Text = $"Подготовка: {args.Name} ({args.ProgressedTasks}/{args.TotalTasks})");
-
-            await launcher.InstallAsync(versionId);
-
-            SetBusy(true, "Запускаю Burmalda Client...");
-            var options = new MLaunchOption
+            var startInfo = new ProcessStartInfo
             {
-                Session = session,
-                MaximumRamMb = 4096,
-                GameLauncherName = "BurmaldaLauncher",
-                GameLauncherVersion = "0.3.0"
+                FileName = _legacyLauncherPath,
+                WorkingDirectory = Path.GetDirectoryName(_legacyLauncherPath)!,
+                UseShellExecute = true
             };
-            var process = await launcher.BuildProcessAsync(versionId, options);
-            process.Start();
-            StatusText.Text = "Minecraft запущен";
+            startInfo.ArgumentList.Add("--directory");
+            startInfo.ArgumentList.Add(_gameDirectory!);
+            startInfo.ArgumentList.Add("--version");
+            startInfo.ArgumentList.Add(version);
+            startInfo.ArgumentList.Add("--launch");
+            Process.Start(startInfo);
+            StatusText.Text = "Legacy Launcher запущен — Minecraft начнёт запускаться автоматически";
         }
         catch (Exception ex)
         {
-            StatusText.Text = "Не удалось запустить Minecraft";
-            MessageBox.Show("Ошибка запуска: " + ex.Message, "Burmalda Launcher");
+            StatusText.Text = "Не удалось открыть Legacy Launcher";
+            MessageBox.Show("Ошибка запуска Legacy Launcher: " + ex.Message, "Ошибка");
         }
-        finally
-        {
-            Cursor = System.Windows.Input.Cursors.Arrow;
-            SaveSettings();
-        }
-    }
-
-    private string? FindFabric1211Version()
-    {
-        var versionsDirectory = Path.Combine(_gameDirectory!, "versions");
-        if (!Directory.Exists(versionsDirectory)) return null;
-
-        foreach (var jsonFile in Directory.EnumerateFiles(versionsDirectory, "*.json", SearchOption.AllDirectories))
-        {
-            try
-            {
-                using var document = JsonDocument.Parse(File.ReadAllText(jsonFile));
-                var root = document.RootElement;
-                if (!root.TryGetProperty("id", out var idElement)) continue;
-                var id = idElement.GetString();
-                if (string.IsNullOrWhiteSpace(id) ||
-                    !id.Contains("fabric", StringComparison.OrdinalIgnoreCase)) continue;
-
-                if (root.TryGetProperty("inheritsFrom", out var parentElement) &&
-                    parentElement.GetString() == "1.21.1")
-                    return id;
-            }
-            catch { /* Ignore unrelated or damaged version metadata. */ }
-        }
-        return null;
     }
 
     private void SetBusy(bool busy, string status)
@@ -311,5 +301,5 @@ public partial class MainWindow : Window
         Cursor = busy ? System.Windows.Input.Cursors.Wait : System.Windows.Input.Cursors.Arrow;
     }
 
-    private sealed record LauncherSettings(string? GameDirectory, string? ReleaseRepository);
+    private sealed record LauncherSettings(string? GameDirectory, string? ReleaseRepository, string? LegacyLauncherPath);
 }
