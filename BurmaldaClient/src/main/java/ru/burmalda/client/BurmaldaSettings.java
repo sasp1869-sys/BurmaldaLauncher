@@ -18,6 +18,7 @@ final class BurmaldaSettings {
     static boolean rgb = true;
     static boolean compact = false;
     static boolean performance = false;
+    static boolean fullbright = false;
     static int hudX = 8;
     static int hudY = 8;
     static int hueSpeed = 2;
@@ -40,6 +41,7 @@ final class BurmaldaSettings {
             rgb = Boolean.parseBoolean(p.getProperty("rgb", "true"));
             compact = Boolean.parseBoolean(p.getProperty("compact", "false"));
             performance = Boolean.parseBoolean(p.getProperty("performance", "false"));
+            fullbright = Boolean.parseBoolean(p.getProperty("fullbright", "false"));
             hudX = Integer.parseInt(p.getProperty("hudX", "8"));
             hudY = Integer.parseInt(p.getProperty("hudY", "8"));
             hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", "2"));
@@ -58,6 +60,7 @@ final class BurmaldaSettings {
         p.setProperty("rgb", Boolean.toString(rgb));
         p.setProperty("compact", Boolean.toString(compact));
         p.setProperty("performance", Boolean.toString(performance));
+        p.setProperty("fullbright", Boolean.toString(fullbright));
         p.setProperty("hudX", Integer.toString(hudX));
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));
