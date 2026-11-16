@@ -31,6 +31,9 @@ final class BurmaldaSettings {
     static boolean biomeHud = false;
     static boolean armorHud = false;
     static boolean keystrokesHud = false;
+    static boolean dimensionHud = false;
+    static boolean lightHud = false;
+    static boolean clockHud = false;
     static int hudX = 8;
     static int hudY = 8;
     static int hueSpeed = 2;
@@ -120,6 +123,9 @@ final class BurmaldaSettings {
             biomeHud = Boolean.parseBoolean(p.getProperty("biomeHud", Boolean.toString(biomeHud)));
             armorHud = Boolean.parseBoolean(p.getProperty("armorHud", Boolean.toString(armorHud)));
             keystrokesHud = Boolean.parseBoolean(p.getProperty("keystrokesHud", Boolean.toString(keystrokesHud)));
+            dimensionHud = Boolean.parseBoolean(p.getProperty("dimensionHud", Boolean.toString(dimensionHud)));
+            lightHud = Boolean.parseBoolean(p.getProperty("lightHud", Boolean.toString(lightHud)));
+            clockHud = Boolean.parseBoolean(p.getProperty("clockHud", Boolean.toString(clockHud)));
             hudX = Integer.parseInt(p.getProperty("hudX", Integer.toString(hudX)));
             hudY = Integer.parseInt(p.getProperty("hudY", Integer.toString(hudY)));
             hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", Integer.toString(hueSpeed)));
@@ -148,6 +154,9 @@ final class BurmaldaSettings {
         p.setProperty("biomeHud", Boolean.toString(biomeHud));
         p.setProperty("armorHud", Boolean.toString(armorHud));
         p.setProperty("keystrokesHud", Boolean.toString(keystrokesHud));
+        p.setProperty("dimensionHud", Boolean.toString(dimensionHud));
+        p.setProperty("lightHud", Boolean.toString(lightHud));
+        p.setProperty("clockHud", Boolean.toString(clockHud));
         p.setProperty("hudX", Integer.toString(hudX));
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));

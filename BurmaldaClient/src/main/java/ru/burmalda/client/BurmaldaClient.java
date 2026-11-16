@@ -164,7 +164,10 @@ public final class BurmaldaClient implements ClientModInitializer {
                 + (BurmaldaSettings.speedHud ? 1 : 0)
                 + (BurmaldaSettings.biomeHud ? 1 : 0)
                 + (BurmaldaSettings.armorHud ? 1 : 0)
-                + (BurmaldaSettings.keystrokesHud ? 2 : 0);
+                + (BurmaldaSettings.keystrokesHud ? 2 : 0)
+                + (BurmaldaSettings.dimensionHud ? 1 : 0)
+                + (BurmaldaSettings.lightHud ? 1 : 0)
+                + (BurmaldaSettings.clockHud ? 1 : 0);
         if (lines == 0) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -229,6 +232,25 @@ public final class BurmaldaClient implements ClientModInitializer {
             }
             if (first) armor.append("empty");
             context.drawTextWithShadow(client.textRenderer, Text.literal(armor.toString()), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.dimensionHud && client.world != null) {
+            String dimension = client.world.getRegistryKey().getValue().getPath();
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Dimension: " + dimension), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.lightHud && client.world != null) {
+            int light = client.world.getLightLevel(client.player.getBlockPos());
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Light: " + light), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.clockHud && client.world != null) {
+            long time = client.world.getTimeOfDay() % 24000L;
+            long hours = (time / 1000L + 6L) % 24L;
+            long minutes = time % 1000L * 60L / 1000L;
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal(String.format(java.util.Locale.ROOT, "World time: %02d:%02d", hours, minutes)),
+                    x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
         }
         if (BurmaldaSettings.keystrokesHud) {

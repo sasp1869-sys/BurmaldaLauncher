@@ -76,6 +76,12 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.armorHud, v -> BurmaldaSettings.armorHud = v);
         add("Keystrokes", Category.HUD, "Показывает нажатые WASD, прыжок и спринт",
                 () -> BurmaldaSettings.keystrokesHud, v -> BurmaldaSettings.keystrokesHud = v);
+        add("Dimension", Category.HUD, "Показывает текущее измерение",
+                () -> BurmaldaSettings.dimensionHud, v -> BurmaldaSettings.dimensionHud = v);
+        add("Light Level", Category.HUD, "Показывает освещение под игроком",
+                () -> BurmaldaSettings.lightHud, v -> BurmaldaSettings.lightHud = v);
+        add("World Clock", Category.HUD, "Показывает игровое время мира",
+                () -> BurmaldaSettings.clockHud, v -> BurmaldaSettings.clockHud = v);
     }
 
     private static void add(String name, Category category, String description,

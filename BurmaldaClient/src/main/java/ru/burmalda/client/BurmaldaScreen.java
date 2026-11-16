@@ -14,8 +14,9 @@ public final class BurmaldaScreen extends Screen {
     private static final int CATEGORY_Y = 32;
     private static final int FILTER_Y = 98;
     private static final int MODULES_Y = 128;
-    private static final int MODULE_ROW_HEIGHT = 25;
-    private static final int MODULE_COLUMN_WIDTH = 158;
+    private static final int MODULE_ROW_HEIGHT = 22;
+    private static final int MODULE_COLUMN_WIDTH = 106;
+    private static final int MODULE_COLUMNS = 3;
 
     private final boolean editor;
     private final BurmaldaModules.Category selectedCategory;
@@ -95,7 +96,7 @@ public final class BurmaldaScreen extends Screen {
     }
 
     private int maxScroll(List<BurmaldaModules.Module> modules) {
-        int rows = (modules.size() + 1) / 2;
+        int rows = (modules.size() + MODULE_COLUMNS - 1) / MODULE_COLUMNS;
         return Math.max(0, rows - visibleRows());
     }
 
@@ -103,12 +104,12 @@ public final class BurmaldaScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (!editor && button == 0 && mouseY >= MODULES_Y && mouseY < height - 24) {
             List<BurmaldaModules.Module> modules = visibleModules();
-            int startX = width / 2 - 154;
-            int col = mouseX < startX + MODULE_COLUMN_WIDTH ? 0 : 1;
+            int startX = width / 2 - 160;
+            int col = Math.max(0, Math.min(MODULE_COLUMNS - 1, (int)((mouseX - startX) / MODULE_COLUMN_WIDTH)));
             int x = startX + col * MODULE_COLUMN_WIDTH;
             int row = (int) ((mouseY - MODULES_Y) / MODULE_ROW_HEIGHT) + moduleScroll;
-            int index = row * 2 + col;
-            if (mouseX >= x && mouseX <= x + 150 && index >= 0 && index < modules.size()) {
+            int index = row * MODULE_COLUMNS + col;
+            if (mouseX >= x && mouseX <= x + 100 && index >= 0 && index < modules.size()) {
                 modules.get(index).toggle();
                 return true;
             }
@@ -145,21 +146,21 @@ public final class BurmaldaScreen extends Screen {
 
             List<BurmaldaModules.Module> modules = visibleModules();
             moduleScroll = Math.min(moduleScroll, maxScroll(modules));
-            int startX = width / 2 - 154;
+            int startX = width / 2 - 160;
             int rows = visibleRows();
-            context.enableScissor(startX, MODULES_Y, startX + 308, height - 24);
+            context.enableScissor(startX, MODULES_Y, startX + 320, height - 24);
             for (int visibleRow = 0; visibleRow < rows; visibleRow++) {
                 int row = visibleRow + moduleScroll;
                 for (int col = 0; col < 2; col++) {
-                    int index = row * 2 + col;
+                    int index = row * MODULE_COLUMNS + col;
                     if (index >= modules.size()) continue;
                     BurmaldaModules.Module module = modules.get(index);
                     int x = startX + col * MODULE_COLUMN_WIDTH;
                     int y = MODULES_Y + visibleRow * MODULE_ROW_HEIGHT;
-                    context.fill(x, y, x + 150, y + 21, module.enabled() ? 0xCC174D38 : 0xCC252A35);
+                    context.fill(x, y, x + 100, y + 19, module.enabled() ? 0xCC174D38 : 0xCC252A35);
                     context.drawTextWithShadow(textRenderer,
                             Text.literal(module.name + (module.enabled() ? "  ON" : "  OFF")),
-                            x + 6, y + 3, module.enabled() ? 0xFF8CFFB0 : 0xFFE0E0E0);
+                            x + 4, y + 3, module.enabled() ? 0xFF8CFFB0 : 0xFFE0E0E0);
                 }
             }
             context.disableScissor();
@@ -170,7 +171,7 @@ public final class BurmaldaScreen extends Screen {
                         width / 2, MODULES_Y + 12, 0xFFAAAAAA);
             }
             context.drawCenteredTextWithShadow(textRenderer,
-                    Text.literal("Колёсико мыши — прокрутка. Настройки сохраняются автоматически."),
+                    Text.literal("3 колонки • Колёсико — прокрутка • Автосохранение"),
                     width / 2, height - 14, 0xFFAAAAAA);
         }
         super.render(context, mouseX, mouseY, delta);
