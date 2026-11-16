@@ -25,6 +25,9 @@ final class BurmaldaSettings {
     static boolean sprint = false;
     static boolean autoWalk = false;
     static boolean autoJump = false;
+    static boolean pingHud = true;
+    static boolean directionHud = false;
+    static boolean speedHud = false;
     static int hudX = 8;
     static int hudY = 8;
     static int hueSpeed = 2;
@@ -108,6 +111,9 @@ final class BurmaldaSettings {
             sprint = Boolean.parseBoolean(p.getProperty("sprint", Boolean.toString(sprint)));
             autoWalk = Boolean.parseBoolean(p.getProperty("autoWalk", Boolean.toString(autoWalk)));
             autoJump = Boolean.parseBoolean(p.getProperty("autoJump", Boolean.toString(autoJump)));
+            pingHud = Boolean.parseBoolean(p.getProperty("pingHud", Boolean.toString(pingHud)));
+            directionHud = Boolean.parseBoolean(p.getProperty("directionHud", Boolean.toString(directionHud)));
+            speedHud = Boolean.parseBoolean(p.getProperty("speedHud", Boolean.toString(speedHud)));
             hudX = Integer.parseInt(p.getProperty("hudX", Integer.toString(hudX)));
             hudY = Integer.parseInt(p.getProperty("hudY", Integer.toString(hudY)));
             hueSpeed = Integer.parseInt(p.getProperty("hueSpeed", Integer.toString(hueSpeed)));
@@ -130,6 +136,9 @@ final class BurmaldaSettings {
         p.setProperty("sprint", Boolean.toString(sprint));
         p.setProperty("autoWalk", Boolean.toString(autoWalk));
         p.setProperty("autoJump", Boolean.toString(autoJump));
+        p.setProperty("pingHud", Boolean.toString(pingHud));
+        p.setProperty("directionHud", Boolean.toString(directionHud));
+        p.setProperty("speedHud", Boolean.toString(speedHud));
         p.setProperty("hudX", Integer.toString(hudX));
         p.setProperty("hudY", Integer.toString(hudY));
         p.setProperty("hueSpeed", Integer.toString(hueSpeed));

@@ -37,7 +37,7 @@ public final class BurmaldaClient implements ClientModInitializer {
                 GLFW.GLFW_KEY_F6, "category.burmalda"));
 
         ClientSendMessageEvents.ALLOW_CHAT.register(message -> {
-            if (!message.startsWith(".cfg")) return true;
+            if (!message.equals(".cfg") && !message.startsWith(".cfg ")) return true;
             handleConfigCommand(message);
             return false;
         });
@@ -152,7 +152,10 @@ public final class BurmaldaClient implements ClientModInitializer {
 
         int lines = (BurmaldaSettings.watermark ? 1 : 0)
                 + (BurmaldaSettings.fps ? 1 : 0)
-                + (BurmaldaSettings.coordinates ? 1 : 0);
+                + (BurmaldaSettings.coordinates ? 1 : 0)
+                + (BurmaldaSettings.pingHud ? 1 : 0)
+                + (BurmaldaSettings.directionHud ? 1 : 0)
+                + (BurmaldaSettings.speedHud ? 1 : 0);
         if (lines == 0) return;
 
         int lineHeight = (BurmaldaSettings.compact || BurmaldaSettings.performance) ? 10 : 12;
@@ -177,6 +180,25 @@ public final class BurmaldaClient implements ClientModInitializer {
             String coords = String.format(java.util.Locale.ROOT, "XYZ: %.1f / %.1f / %.1f",
                     client.player.getX(), client.player.getY(), client.player.getZ());
             context.drawTextWithShadow(client.textRenderer, Text.literal(coords), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.pingHud) {
+            var entry = client.getNetworkHandler() == null ? null : client.getNetworkHandler().getPlayerListEntry(client.player.getUuid());
+            String ping = entry == null ? "Ping: --" : "Ping: " + entry.getLatency() + " ms";
+            context.drawTextWithShadow(client.textRenderer, Text.literal(ping), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.directionHud) {
+            float yaw = client.player.getYaw();
+            String direction = yaw >= -45 && yaw < 45 ? "South" : yaw >= 45 && yaw < 135 ? "West" : yaw >= -135 && yaw < -45 ? "East" : "North";
+            context.drawTextWithShadow(client.textRenderer, Text.literal("Facing: " + direction), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.speedHud) {
+            double vx = client.player.getVelocity().x;
+            double vz = client.player.getVelocity().z;
+            double speed = Math.sqrt(vx * vx + vz * vz) * 20.0;
+            context.drawTextWithShadow(client.textRenderer, Text.literal(String.format(java.util.Locale.ROOT, "Speed: %.2f b/s", speed)), x, currentY, 0xFFFFFFFF);
         }
     }
 
