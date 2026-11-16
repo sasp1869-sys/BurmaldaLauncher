@@ -64,6 +64,8 @@ final class BurmaldaModules {
                 () -> BurmaldaSettings.autoWalk, v -> BurmaldaSettings.autoWalk = v);
         add("Auto Jump", Category.MOVEMENT, "Включает стандартную настройку автоматического прыжка Minecraft",
                 () -> BurmaldaSettings.autoJump, v -> BurmaldaSettings.autoJump = v);
+        add("Build Height", Category.HUD, "Показывает высоту игрока и верхнюю границу строительства",
+                () -> BurmaldaSettings.buildHeightHud, v -> BurmaldaSettings.buildHeightHud = v);
         add("Ping", Category.HUD, "Показывает задержку до сервера",
                 () -> BurmaldaSettings.pingHud, v -> BurmaldaSettings.pingHud = v);
         add("Direction", Category.HUD, "Показывает направление взгляда",

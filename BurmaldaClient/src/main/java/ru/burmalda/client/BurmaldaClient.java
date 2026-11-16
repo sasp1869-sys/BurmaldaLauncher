@@ -173,6 +173,7 @@ public final class BurmaldaClient implements ClientModInitializer {
         int lines = (BurmaldaSettings.watermark ? 1 : 0)
                 + (BurmaldaSettings.fps ? 1 : 0)
                 + (BurmaldaSettings.coordinates ? 1 : 0)
+                + (BurmaldaSettings.buildHeightHud ? 1 : 0)
                 + (BurmaldaSettings.pingHud ? 1 : 0)
                 + (BurmaldaSettings.directionHud ? 1 : 0)
                 + (BurmaldaSettings.speedHud ? 1 : 0)
@@ -223,6 +224,14 @@ public final class BurmaldaClient implements ClientModInitializer {
             String coords = String.format(java.util.Locale.ROOT, "XYZ: %.1f / %.1f / %.1f",
                     client.player.getX(), client.player.getY(), client.player.getZ());
             context.drawTextWithShadow(client.textRenderer, Text.literal(coords), x, currentY, 0xFFFFFFFF);
+            currentY += lineHeight;
+        }
+        if (BurmaldaSettings.buildHeightHud && client.world != null) {
+            int minY = client.world.getBottomY();
+            int maxY = minY + client.world.getDimension().height() - 1;
+            context.drawTextWithShadow(client.textRenderer,
+                    Text.literal("Build height: " + (int) Math.floor(client.player.getY()) + " / " + maxY),
+                    x, currentY, 0xFFFFFFFF);
             currentY += lineHeight;
         }
         if (BurmaldaSettings.pingHud) {

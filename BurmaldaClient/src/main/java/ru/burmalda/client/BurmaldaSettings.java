@@ -16,6 +16,7 @@ final class BurmaldaSettings {
     static boolean hud = true;
     static boolean fps = true;
     static boolean coordinates = true;
+    static boolean buildHeightHud = false;
     static boolean watermark = true;
     static boolean panel = true;
     static boolean rgb = true;
@@ -110,6 +111,7 @@ final class BurmaldaSettings {
             hud = Boolean.parseBoolean(p.getProperty("hud", Boolean.toString(hud)));
             fps = Boolean.parseBoolean(p.getProperty("fps", Boolean.toString(fps)));
             coordinates = Boolean.parseBoolean(p.getProperty("coordinates", Boolean.toString(coordinates)));
+            buildHeightHud = Boolean.parseBoolean(p.getProperty("buildHeightHud", Boolean.toString(buildHeightHud)));
             watermark = Boolean.parseBoolean(p.getProperty("watermark", Boolean.toString(watermark)));
             panel = Boolean.parseBoolean(p.getProperty("panel", Boolean.toString(panel)));
             rgb = Boolean.parseBoolean(p.getProperty("rgb", Boolean.toString(rgb)));
@@ -143,6 +145,7 @@ final class BurmaldaSettings {
         p.setProperty("hud", Boolean.toString(hud));
         p.setProperty("fps", Boolean.toString(fps));
         p.setProperty("coordinates", Boolean.toString(coordinates));
+        p.setProperty("buildHeightHud", Boolean.toString(buildHeightHud));
         p.setProperty("watermark", Boolean.toString(watermark));
         p.setProperty("panel", Boolean.toString(panel));
         p.setProperty("rgb", Boolean.toString(rgb));
